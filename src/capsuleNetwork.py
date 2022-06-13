@@ -62,6 +62,11 @@ class CapsuleNetwork(tf.keras.Model):
         v_ = tf.reduce_sum(tf.square(v), axis = axis, keepdims=True)
         return tf.sqrt(v_ + epsilon)
 
+    def show_plain_output(model, single_image):
+        x = tf.reshape(single_image, [1, 28, 28, 1])
+        pred = CapsuleNetwork.safe_norm(model.predict_capsule_output(x))
+        return pred
+
     def predict(model, x):
         pred = CapsuleNetwork.safe_norm(model.predict_capsule_output(x))
         pred = tf.squeeze(pred, [1])

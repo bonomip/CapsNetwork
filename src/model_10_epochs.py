@@ -2,6 +2,11 @@ from capsuleNetwork import CapsuleNetwork
 import tensorflow as tf
 from datetime import datetime
 
+def show_plain_output(single_image):
+    #single image is a numpy array 28x28x1
+    global model
+    return CapsuleNetwork.show_plain_output(model, single_image)
+
 #device_name = tf.test.gpu_device_name()
 #if device_name != '/device:GPU:0':
 #    raise SystemError('GPU device not found')
