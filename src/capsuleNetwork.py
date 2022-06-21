@@ -44,14 +44,6 @@ class CapsuleNetwork(tf.keras.Model):
         
     def build(self, input_shape):
         pass
-    
-
-    def save(self):
-        #  save the current trained module
-        self.save_weights('saved_model/weights/capsule_network_weights')
-    
-    def load(self):
-        self.load_weights('saved_model/weights/capsule_network_weights'); 
 
     def squash(self, s):
         with tf.name_scope("SquashFunction") as scope:

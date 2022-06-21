@@ -4,6 +4,7 @@ logs/
 img/
 .ipynb_checkpoints/
 *.jpeg
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

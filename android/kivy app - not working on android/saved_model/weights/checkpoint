@@ -1,2 +1,0 @@
-model_checkpoint_path: "capsule_network_weights"
-all_model_checkpoint_paths: "capsule_network_weights"

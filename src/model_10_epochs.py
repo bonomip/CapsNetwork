@@ -69,7 +69,8 @@ params = {
 
 model = CapsuleNetwork(**params)
 
-model.load()
+model.load_weights("saved_model/weights/capsule_network_weights")
+#model.save_weights('saved_model/weights/capsule_network_weights')
 
 ##### BUILD MODEL
 
