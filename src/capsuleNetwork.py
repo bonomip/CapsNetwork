@@ -28,7 +28,10 @@ class CapsuleNetwork(tf.keras.Model):
                                                       # 256
             self.convolution = tf.keras.layers.Conv2D(self.no_of_conv_kernels, [9,9], strides=[1,1], name='ConvolutionLayer', activation='relu')
             
-            # learns 32 * 8 (= 252) filters with kernel 9x9 and stride 2
+            # i think there's an error by the author, 32 is the number of channels not the number of primary capsules that is
+            # 1152(=6*6*32)
+            #
+            # learns 32 * 8 (= 256) filters with kernel 9x9 and stride 2
                                                          #   32                       * 8
             self.primary_capsule = tf.keras.layers.Conv2D(self.no_of_primary_capsules * self.primary_capsule_vector, [9,9], strides=[2,2], name="PrimaryCapsule")
             
@@ -101,6 +104,7 @@ class CapsuleNetwork(tf.keras.Model):
         x = self.primary_capsule(x) #x.shape: (None, 6, 6, 256) => 6*6*8*32 / 8 = 1152
         
         #there are 32 capsule with dimension 8, each of those has 36 (=6*6) 8D vector (36*32 = 1152 => 8D Vectors)
+        ###### there are 32 channels, in each channels there are 36 8D capsule. 
         
         with tf.name_scope("CapsuleFormation") as scope:
             #converting output from shape (None, 6, 6, 256) to shape (None, 1152, 8)
