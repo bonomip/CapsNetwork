@@ -5,6 +5,10 @@ img/
 .ipynb_checkpoints/
 *.jpeg
 *.png
+notebook/data/
+saved_model/
+tricks.txt
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
