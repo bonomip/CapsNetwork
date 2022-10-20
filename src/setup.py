@@ -38,7 +38,7 @@ class Setup:
 
         self.check_for_gpu()
 
-        self.train_batch, self.test_batch, self.X_train, self.y_train, self.X_test, self.y_test = self.init_dataset()
+        self.dataset, self.testing, self.X_train, self.y_train, self.X_test, self.y_test = self.init_dataset()
 
         self.model = self.init_model()
 
@@ -115,7 +115,7 @@ class Setup:
         if(self.train_model):
 
             print("Start training model...")
-            model.train_for_epochs()
+            model.train_for_epochs(self.dataset)
 
             print("Saving model... ")
             model.save(self.model_settings, self.model_version, self.epochs)
@@ -139,10 +139,10 @@ class Setup:
         return self.model    
     
     def get_dataset(self):
-        return self.train_batch
+        return self.dataset
     
     def get_testing(self):
-        return self.test_batch
+        return self.testing
     
     def get_train_images(self):
             return self.X_train, self.y_train
