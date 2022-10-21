@@ -9,7 +9,6 @@ class CapsuleNetwork(tf.keras.Model):
     m_minus = 0.1
     lambda_ = 0.5
     alpha = 0.0005
-    epochs = 10 # 50
     optimizer = tf.keras.optimizers.Adam()
 
 
@@ -60,8 +59,13 @@ class CapsuleNetwork(tf.keras.Model):
     def build(self, input_shape):
         pass
 
+    def set_epochs(self, epochs):
+        self.epochs = epochs
+
+    def get_epochs(self):
+        return self.epochs
+
     def save(self, name, version, epochs):
-        #  save the current trained module
         self.save_weights('saved_model/'+name+'_weights/capsule_network_weights'+'_epochs_'+str(epochs)+version)
     
     def load(self, name, version, epochs):

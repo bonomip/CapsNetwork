@@ -5,6 +5,19 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
+def pretty_experiment_overview(setup):
+    
+    no_train_imgs = setup.X_train.shape[0]
+    no_test_imgs = setup.X_test.shape[0]
+    test_dataset_type = setup.test_dataset_setting
+    model_type = setup.train_dataset_setting
+    epochs= setup.epochs
+
+    s = "The model was trained with "+str(no_train_imgs)+" "+model_type+" images for "+str(epochs)+" epochs.\n"
+    s += "It's going to be tested with "+str(no_test_imgs)+" "+test_dataset_type+" images."
+    
+    print(s)
+
 def print_image_and_prediction(x, y, p, size):
     print_image(x, "value: "+str(y)+" - prediction: "+str(p), size)
 
@@ -82,7 +95,7 @@ def print_fixed_network_params(model):
     show_grid(f[:,:,:,0], 16, 16, "Primary Capsule Filter 9x9x256 #3 of 32*8") # first filter 9x9x256    
 
 # TODOs adjust print based on x shape    
-def show_conv1_rfm(x, f, b, img):
+def show_conv1_rfm(x, f, b):
     x = tf.nn.conv2d(x,f,strides=[1, 1],padding='VALID')
     x = tf.add(x, b)
     x = tf.nn.relu(x).numpy()
