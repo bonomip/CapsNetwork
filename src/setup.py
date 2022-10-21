@@ -1,4 +1,3 @@
-from pyexpat.errors import XML_ERROR_TAG_MISMATCH
 import numpy as np
 import tensorflow as tf
 
@@ -7,11 +6,11 @@ import tensorflow as tf
 import capsuleNetwork_v2 as capsNet
 import affNIST
 import caffNIST
+import MNIST
 
 class Setup:
 
-    d_k = ["MNIST", "CUSTOM_AFFNIST", "AFFNIST"] #dataset keys
-    m_k = ["M40", "CA", "A", "CAWS"] #model keys
+    d_k = ["MNIST", "Custom_affNIST", "affNIST", "Custo_affNIST_without_shearing"] #dataset keys
 
     #architecture params
     params = {
@@ -24,12 +23,11 @@ class Setup:
         "r":3,
     }
 
-    def __init__(self, train_cfg=d_k[1], test_cfg=d_k[1], model_cfg=m_k[1], model_v="_v1", 
+    def __init__(self, train_cfg=d_k[1], test_cfg=d_k[1], model_v="_v1", 
                     db_v="_v1", should_be_trained=False, epochs=10, should_create_dataset=False):
 
         self.train_dataset_setting = train_cfg
         self.test_dataset_setting = test_cfg
-        self.model_settings = model_cfg
         self.database_version = db_v
         self.model_version = model_v
         self.train_model = should_be_trained
@@ -46,9 +44,9 @@ class Setup:
         X_ = 0
         y_ = 0
         
-        if string == self.d_k[0]: # MINST
+        if string == self.d_k[0]: # MINST #TODO APPLY PADDING to make it 40x40
             
-            a,b,c,d = 0
+            a = b = c = d = 0
             s = "training" if train else "test"
             
             print("Load MINST "+s+" dataset from keras... ")
@@ -56,12 +54,12 @@ class Setup:
 
             if(train):
                 
-                X_ = a
+                X_ = MNIST.from28to40(a)
                 y_ = b
                 
             else:
                 
-                X_ = c
+                X_ = MNIST.from28to40(c)
                 y_ = d
                 
         elif string == self.d_k[1]: # CUSTOM AFFNIST
@@ -111,19 +109,20 @@ class Setup:
         
         print("Creating model... ")
         model = capsNet.CapsuleNetwork(**self.params)
-        
+        model.set_epochs(self.epochs)
+
         if(self.train_model):
 
             print("Start training model...")
             model.train_for_epochs(self.dataset)
 
             print("Saving model... ")
-            model.save(self.model_settings, self.model_version, self.epochs)
+            model.save(self.train_dataset_setting, self.model_version, self.epochs)
         else:
 
             print("Loading model... ")
-            model.load(self.model_settings, self.model_version, self.epochs)
-            _ = model.train(self.X_train[:32],self.y_train[:32])
+            model.load(self.train_dataset_setting, self.model_version, self.epochs)
+            _ = model.train(self.X_train[:1],self.y_train[:1])
 
         return model
 
