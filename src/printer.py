@@ -26,22 +26,72 @@ def print_image(x, y, size):
     plt.xlabel(y)
     plt.imshow(tf.reshape(x, [1, size, size, 1])[0])
 
-def print_matrix(matrix, title, x_label, y_label, x_headers, y_headers, size_x=10, size_y=10, color="Blues"):
-        fig, ax = plt.subplots(figsize=(size_x,size_y))
-        ax = sns.heatmap(matrix, annot=True, fmt='g', cmap=color, ax=ax)
+def get_sum_row_matrix_label(matrix):
+    res = []
+    for c in range(0, 10):
+        res.append( str( int( np.sum( matrix[:,c] ) ) ) )
+    return res
+
+def get_sum_colum_matrix_label(matrix):
+    res = []
+    for r in range(0, 10):
+        res.append( str( int( np.sum( matrix[r,:] ) ) ) )
+    return res
+
+def print_matrix(matrix, matrix_type, model_type, data_type, no_images, col_labels=0, row_labels=0, size_x=10, size_y=10, color="Blues"):
+        headers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        
+        title = "CapsNet= "+model_type+" - Confusion Matrix= "+matrix_type+", based on "+str(no_images/1000)+"K "+data_type+" images"
+        x_label = "Actual Digit"
+        y_label = "Predicted Digit"
+        
+        if row_labels != 0:
+            fig, ax = plt.subplots(figsize=(size_x,size_y))
+            mat = matrix.copy()
+            mat = mat.transpose()
             
-        ax.set_title(title+'\n\n', size=size_x*1.9)
-        ax.set_xlabel('\n'+x_label, size=size_x*1.5)
-        ax.set_ylabel(y_label+' \n', size=size_x*1.5)
+            ax = sns.heatmap(mat, annot=True, fmt='g', cmap=color, ax=ax)
+
+            ax.set_title(title+'\n\n', size=size_x*1.9)
+            ax.set_xlabel('\n'+y_label, size=size_x*1.5)
+            ax.set_ylabel(x_label+' \n', size=size_x*1.5)
+            
+            ax3 = ax.twiny()
+            # ax3.set_aspect("equal")
+            ax3.set_xlabel("No. of occurencies\n", size=size_x*1.5)
+            ax3.set_xlim([0,ax.get_xlim()[1]])
+            ax3.set_xticks(ax.get_xticks())
+            ax3.set_xticklabels(row_labels, fontsize=size_x*1)
+            ax3.tick_params(top=False)
+            ax3.spines['top'].set_visible(False)
+            ax3.spines['right'].set_visible(False)
+            ax3.spines['bottom'].set_visible(False)
+            ax3.spines['left'].set_visible(False)
+        else:
+            fig, ax = plt.subplots(figsize=(size_x,size_y))
+            ax = sns.heatmap(matrix, annot=True, fmt='g', cmap=color, ax=ax)
+
+            ax.set_title(title+'\n\n', size=size_x*1.9)
+            ax.set_xlabel('\n'+x_label, size=size_x*1.5)
+            ax.set_ylabel(y_label+' \n', size=size_x*1.5)
 
 
-        colorbar = ax.collections[0].colorbar
-        colorbar.set_ticks([0, 2, 4, 6, 8, 10])
-        colorbar.set_ticklabels(['0%', '2%', '4%', '6%', '8%', '10%'])
+        if col_labels != 0:            
+            ax3 = ax.twiny()
+            # ax3.set_aspect("equal")
+            ax3.set_xlabel("No. of occurencies\n", size=size_x*1.5)
+            ax3.set_xlim([0,ax.get_xlim()[1]])
+            ax3.set_xticks(ax.get_xticks())
+            ax3.set_xticklabels(col_labels, fontsize=size_x*1)
+            ax3.tick_params(top=False)
+            ax3.spines['top'].set_visible(False)
+            ax3.spines['right'].set_visible(False)
+            ax3.spines['bottom'].set_visible(False)
+            ax3.spines['left'].set_visible(False)  
 
         ## Ticket labels - List must be in alphabetical order
-        ax.xaxis.set_ticklabels(x_headers)
-        ax.yaxis.set_ticklabels(y_headers)
+        ax.xaxis.set_ticklabels(headers)
+        ax.yaxis.set_ticklabels(headers)
 
         ## Display the visualization of the Confusion Matrix.
         plt.show()

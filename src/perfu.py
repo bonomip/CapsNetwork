@@ -3,8 +3,6 @@ import numpy as np
 from tqdm import tqdm
 import tensorflow as tf
 
-headers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-
 def get_confusion_table_for(mat, digit, tot):
     
     dict_ = {}
@@ -152,7 +150,25 @@ def normalize_matrix(matrix, tot):
     for i in range(0, 10):
         for j in range(0, 10):
             mat[i, j] = (mat[i, j] / tot) * 100  
-    return mat
+    return  np.around(mat, decimals=3)
+
+def normalize_matrix_on_row(matrix):
+    mat = matrix.copy()
+    for c in range(0,10):
+        
+        mat[:,c] /= np.sum(mat[:,c])
+        mat[:,c] *= 100 
+                           
+    return np.around(mat, decimals=3)
+
+def normalize_matrix_on_columns(matrix):
+    mat = matrix.copy()
+    for r in range(0,10):
+        
+        mat[r,:] /= np.sum(mat[r,:])
+        mat[r,:] *= 100
+                           
+    return np.around(mat, decimals=3)
 
 def print_eval_params(mat):
     
