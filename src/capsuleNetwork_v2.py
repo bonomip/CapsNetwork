@@ -116,31 +116,31 @@ class CapsuleNetwork(tf.keras.Model):
 
         print(test_sum/test_database[0])
         
-    def train_for_epochs(self, train_dataset):
+    def train_for_epochs(self, batches, no_images):
         losses = []
         accuracy = []
         for i in range(1, self.epochs+1, 1):
 
             loss = 0
-            with tqdm(total=len(train_dataset)) as pbar:
+            with tqdm(total=len(batches)) as pbar:
 
                 description = "Epoch " + str(i) + "/" + str(self.epochs)
                 pbar.set_description_str(description)
-                for X_batch, y_batch in train_dataset:
+                for X_batch, y_batch in batches:
 
                     loss += self.train(X_batch,y_batch)
                     pbar.update(1)
 
-                loss /= len(train_dataset)
+                loss /= len(batches)
                 losses.append(loss.numpy())
                 training_sum = 0
                 print_statement = "Loss :" + str(loss.numpy()) + " Evaluating Accuracy ..."
                 pbar.set_postfix_str(print_statement)
-                for X_batch, y_batch in train_dataset:
+                for X_batch, y_batch in batches:
                     
                     training_sum += sum(self.predict(X_batch)==y_batch.numpy())
                 
-                accuracy.append(training_sum/train_dataset[0])
+                accuracy.append(training_sum/no_images)
 
                 print_statement = "Loss :" + str(loss.numpy()) + " Accuracy :" + str(accuracy[-1])
                 pbar.set_postfix_str(print_statement)   

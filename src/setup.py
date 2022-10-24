@@ -1,3 +1,4 @@
+from model_10_epochs import X_train
 import numpy as np
 import tensorflow as tf
 
@@ -37,7 +38,8 @@ class Setup:
         self.check_for_gpu()
 
         self.dataset, self.testing, self.X_train, self.y_train, self.X_test, self.y_test = self.init_dataset()
-
+        self.no_test_images = self.X_train.shape[0]
+        self.no_train_images = self.X_test.shape[0]        
         self.model = self.init_model()
 
     def switch_dataset(self, string, train):
@@ -114,7 +116,7 @@ class Setup:
         if(self.train_model):
 
             print("Start training model...")
-            model.train_for_epochs(self.dataset)
+            model.train_for_epochs(self.dataset, self.no_test_images)
 
             print("Saving model... ")
             model.save(self.train_dataset_setting, self.model_version, self.epochs)
@@ -148,3 +150,10 @@ class Setup:
 
     def get_test_images(self):
             return self.X_test, self.y_test
+
+    def get_no_train_images(self):
+            return self.no_test_images
+    
+    def get_no_test_images(self):
+            return self.no_train_images
+    
