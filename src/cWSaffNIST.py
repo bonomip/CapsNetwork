@@ -32,7 +32,7 @@ def check_bounds(img, size):
         
 def apply_random_affine_transformation(img, size):
     rotation = 20.0
-    shear = (-9.0, 9.0, -9.0, 9.0)
+    shear = (0, 0, 0, 0)
     scaling = [0.8, 1.2]
     translation = 0 # no ink can fall outside
         
@@ -85,43 +85,43 @@ def apply_affine(tensor, description):
     result = tf.stack(images)
     return result
 
-def create_custom_affnist(train, version, r=3):
+def create_custom_affnist_without_shearing(train, version, r=2):
+    
     print("Load MIST dataset from keras... ")
     (a, b), (c , d)= tf.keras.datasets.mnist.load_data()
-
+    
     if train:
-
-        print("Apply affine transformations... ")
+     
+        print("Apply affine transformations no shearing... ")
         X_ = apply_affine(a, "Apply transformation on train set")
         y_ = b
-
+        
         for _ in range(r-1):
             
             X_temp = apply_affine(a, "Apply transformation on train set")
             X_ = np.concatenate( (X_, X_temp), axis=0 )
             y_ = np.concatenate( (y_, b), axis=0)
-
+        
         print("Saving dataset... ")
-        np.save('./data/caffNIST/x_train'+version+'.npy', X_)
-        np.save('./data/caffNIST/y_train'+version+'.npy', y_)
-
+        np.save('./data/caffNIST_without_shearing/x_train'+version+'.npy', X_)
+        np.save('./data/caffNIST_without_shearing/y_train'+version+'.npy', y_)
     else:
-
+        
         y_ = d
-        print("Apply affine transformations... ")
+        print("Apply affine transformations no shearing... ")
         X_ = apply_affine(c, "Apply transformation on test set")
         print("Saving dataset... ")
-        np.save('./data/caffNIST/x_test'+version+'.npy', X_)
-        np.save('./data/caffNIST/y_test'+version+'.npy', y_)
+        np.save('./data/caffNIST_without_shearing/x_test'+version+'.npy', X_)
+        np.save('./data/caffNIST_without_shearing/y_test'+version+'.npy', y_)
 
     return X_, y_
 
 def load(version, train):
     s = 'train' if train else 'test'
 
-    print("Load Custom affNIST "+s+" dataset "+version+"... ")
+    print("Load Custom affNIST without shearing "+s+" dataset "+version+"... ")
 
-    X_ = np.load('./data/caffNIST/x_'+s+version+'.npy')
-    y_ = np.load('./data/caffNIST/y_'+s+version+'.npy')
+    X_ = np.load('./data/caffNIST_without_shearing/x_'+s+version+'.npy')
+    y_ = np.load('./data/caffNIST_without_shearing/y_'+s+version+'.npy')
     
     return X_, y_
