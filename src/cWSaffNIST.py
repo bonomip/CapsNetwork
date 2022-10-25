@@ -86,7 +86,6 @@ def apply_affine(tensor, description):
     return result
 
 def create_custom_affnist_without_shearing(train, version, r=3):
-    
     print("Load MIST dataset from keras... ")
     (a, b), (c , d)= tf.keras.datasets.mnist.load_data()
     

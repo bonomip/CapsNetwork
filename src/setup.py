@@ -7,6 +7,7 @@ import capsuleNetwork_v2 as capsNet
 import affNIST
 import caffNIST
 import MNIST
+import cWSaffNIST
 
 class Setup:
 
@@ -60,12 +61,14 @@ class Setup:
             else:
                 
                 (X_, y_) = caffNIST.load(self.database_version, train)
-
                     
         elif string == self.d_k[2]: # AFFNIST
             
             (X_, y_) = affNIST.load(train)            
-        
+
+        elif string == self.d_k[3]: # CUTOM AFFNIST NO SHEARING
+
+            (X_, y_) = cWSaffNIST.load(train)
 
         return X_, y_
 
