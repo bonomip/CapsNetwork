@@ -56,7 +56,7 @@ class Setup:
             
             if(self.create_dataset):
                 
-                (X_, y_) = caffNIST.create_custom_affnist(train)
+                (X_, y_) = caffNIST.create_custom_affnist(train, self.database_version)
                 
             else:
                 
@@ -68,7 +68,13 @@ class Setup:
 
         elif string == self.d_k[3]: # CUTOM AFFNIST NO SHEARING
 
-            (X_, y_) = cWSaffNIST.load(train)
+            if(self.create_dataset):
+                
+                (X_, y_) = cWSaffNIST.create_custom_affnist_without_shearing(train, self.database_version)
+                
+            else:
+                
+                (X_, y_) = cWSaffNIST.load(self.database_version, train)
 
         return X_, y_
 
