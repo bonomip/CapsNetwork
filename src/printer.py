@@ -41,7 +41,7 @@ def get_sum_colum_matrix_label(matrix):
 def print_matrix(matrix, matrix_type, model_type, data_type, no_images, col_labels=0, row_labels=0, size_x=10, size_y=10, color="Blues"):
         headers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
         
-        title = "CapsNet= "+model_type+" - Confusion Matrix= "+matrix_type+", based on "+str(no_images/1000)+"K "+data_type+" images"
+        title = "CapsNet= "+model_type+"\nConfusion Matrix= "+matrix_type+", based on "+str(no_images/1000)+"K "+data_type+" images"
         x_label = "Actual Digit"
         y_label = "Predicted Digit"
         

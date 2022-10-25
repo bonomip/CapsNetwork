@@ -92,16 +92,16 @@ def create_custom_affnist(train, version):
         print("Apply affine transformations... ")
         X_ = apply_affine(X_, "Apply transformation on train set")
         print("Saving dataset... ")
-        np.save('./notebook/data/affNIST/x_train'+version+'.npy', X_)
-        np.save('./notebook/data/affNIST/y_train'+version+'.npy', y_)
+        np.save('./data/caffNIST/x_train'+version+'.npy', X_)
+        np.save('./data/caffNIST/y_train'+version+'.npy', y_)
     else:
         print("Load MIST dataset from keras... ")
         (X_train, y_train), (X_ , y_)= tf.keras.datasets.mnist.load_data()
         print("Apply affine transformations... ")
         X_ = apply_affine(X_, "Apply transformation on test set")
         print("Saving dataset... ")
-        np.save('./notebook/data/affNIST/x_test'+version+'.npy', X_)
-        np.save('./notebook/data/affNIST/y_test'+version+'.npy', y_)
+        np.save('./data/caffNIST/x_test'+version+'.npy', X_)
+        np.save('./data/caffNIST/y_test'+version+'.npy', y_)
 
     return X_, y_
 
@@ -110,7 +110,7 @@ def load(version, train):
 
     print("Load Custom affNIST "+s+" dataset "+version+"... ")
 
-    X_ = np.load('./notebook/data/affNIST/x_'+s+version+'.npy')
-    y_ = np.load('./notebook/data/affNIST/y_'+s+version+'.npy')
+    X_ = np.load('./data/caffNIST/x_'+s+version+'.npy')
+    y_ = np.load('./data/caffNIST/y_'+s+version+'.npy')
     
     return X_, y_

@@ -11,7 +11,7 @@ import MNIST
 
 class Setup:
 
-    d_k = ["MNIST", "Custom_affNIST", "affNIST", "Custo_affNIST_without_shearing"] #dataset keys
+    d_k = ["MNIST", "Custom_affNIST", "affNIST", "Custom_affNIST_without_shearing"] #dataset keys
 
     #architecture params
     params = {
@@ -48,21 +48,7 @@ class Setup:
         
         if string == self.d_k[0]: # MINST #TODO APPLY PADDING to make it 40x40
             
-            a = b = c = d = 0
-            s = "training" if train else "test"
-            
-            print("Load MINST "+s+" dataset from keras... ")
-            (a, b), (c , d)= tf.keras.datasets.mnist.load_data()
-
-            if(train):
-                
-                X_ = MNIST.from28to40(a)
-                y_ = b
-                
-            else:
-                
-                X_ = MNIST.from28to40(c)
-                y_ = d
+            X_, y_ = MNIST.load(train)
                 
         elif string == self.d_k[1]: # CUSTOM AFFNIST
             

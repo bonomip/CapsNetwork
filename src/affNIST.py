@@ -1,4 +1,5 @@
 import scipy.io as spio
+import numpy as np
 
 #test set is 10k per batch, trainning set is 50k per batch
 
@@ -42,10 +43,14 @@ def load(train):
 
     print("Load AffNIST "+s+" dataset... ")
 
-    path = './notebook/data/affNIST_Official/'+s+'_batches/1.mat'
+    path = './data/affNIST/'+s+'_batches/1.mat'
     dataset = loadmat(path) 
 
     ans_set = dataset['affNISTdata']['label_int']
     test_set = dataset['affNISTdata']['image']
+
+    test_set = np.transpose(test_set)
+    test_set = np.reshape(test_set, (-1, 40, 40))
+    ans_set = ans_set.astype(np.uint8)
 
     return test_set,ans_set
