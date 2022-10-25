@@ -5,7 +5,8 @@ img/
 .ipynb_checkpoints/
 *.jpeg
 *.png
-notebook/data/
+
+data/
 saved_model/
 tricks.txt
 
