@@ -24,7 +24,7 @@ class Setup:
     }
 
     def __init__(self, train_cfg=d_k[1], test_cfg=d_k[1], model_v="_v1", 
-                    db_v="_v1", should_be_trained=False, epochs=10, should_create_dataset=False):
+                    db_v="_v1", should_be_trained=False, epochs=10, should_create_dataset=False, debug=False):
 
         self.train_dataset_setting = train_cfg
         self.test_dataset_setting = test_cfg
@@ -33,8 +33,10 @@ class Setup:
         self.train_model = should_be_trained
         self.create_dataset = should_create_dataset
         self.epochs = epochs
+        self.debug = debug
 
-        self.check_for_gpu()
+        if not self.debug:
+            self.check_for_gpu()
 
         self.dataset, self.testing, self.X_train, self.y_train, self.X_test, self.y_test = self.init_dataset()
         self.no_test_images = self.X_train.shape[0]
@@ -74,6 +76,12 @@ class Setup:
         (X_test, y_test) = self.switch_dataset(self.test_dataset_setting, train=False)
         
         print("Processing dataset... ")
+
+        if ( self.debug ):
+            X_train = X_train[:100]
+            y_train = y_train[:100]
+            X_test = X_test[:100]
+            y_test = y_test[:100]
 
         X_train = X_train / 255.0
         X_train = tf.cast(X_train, dtype=tf.float32)
@@ -116,6 +124,7 @@ class Setup:
     def check_for_gpu(self):
         device_name = tf.test.gpu_device_name()
         if device_name != '/device:GPU:0':
+            print(device_name)
             raise SystemError('GPU device not found')
         print('Found GPU at: {}'.format(device_name))
 
