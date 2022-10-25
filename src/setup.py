@@ -1,4 +1,3 @@
-from model_10_epochs import X_train
 import numpy as np
 import tensorflow as tf
 
