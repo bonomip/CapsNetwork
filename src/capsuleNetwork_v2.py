@@ -160,7 +160,7 @@ class CapsuleNetwork(tf.keras.Model):
 
                 if i % 10 == 0:
                     print_statement += ' Checkpoint Saved'
-                    checkpoint.save(checkpoint_path)
+                    checkpoint.save(checkpoint_path+"_"+str(i))
                 
                 pbar.set_postfix_str(print_statement)  
 
