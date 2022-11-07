@@ -67,18 +67,12 @@ class CapsuleNetwork(tf.keras.Model):
         return self.epochs
     
     def get_checkpoint_path(self, name, version):
-        return './logs_'+name+'/model'+version
-
-    def save(self, name, version, epochs):
-        self.save_weights('saved_model/'+name+'_weights/capsule_network_weights'+'_epochs_'+str(epochs)+version)
-    
-    def load_from_checkpoint(self, name, version, epochs):
-        checkpoint = tf.train.Checkpoint(model=self)
-        checkpoint.restore(self.get_checkpoint_path(name, version)+"/_"+str(epochs))
+        return './logs/'+name+'/model'+version
 
     def load(self, name, version, epochs):
-        self.load_weights('saved_model/'+name+'_weights/capsule_network_weights'+'_epochs_'+str(epochs)+version)
-    
+        checkpoint = tf.train.Checkpoint(model=self)
+        checkpoint.restore(self.get_checkpoint_path(name, version)+"/ckpt-"+str(int(epochs/10)))
+
     def squash(self, s):
         with tf.name_scope("SquashFunction") as scope:
             s_norm = tf.norm(s, axis=-1, keepdims=True)
@@ -167,7 +161,7 @@ class CapsuleNetwork(tf.keras.Model):
 
                 if i % 10 == 0:
                     print_statement += ' Checkpoint Saved'
-                    checkpoint.save(checkpoint_path+"/_"+str(i))
+                    checkpoint.save(checkpoint_path+"/ckpt")
                 
                 pbar.set_postfix_str(print_statement)  
 
