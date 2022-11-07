@@ -37,8 +37,7 @@ class Setup:
         self.debug = debug
         self.BATCH_SIZE = 64
 
-        if not self.debug:
-            self.check_for_gpu()
+        self.check_for_gpu()
 
         self.dataset, self.testing, self.X_train, self.y_train, self.X_test, self.y_test = self.init_dataset()
         self.no_test_images = self.X_train.shape[0]
@@ -87,10 +86,10 @@ class Setup:
         print("Processing dataset... ")
 
         if ( self.debug ):
-            X_train = X_train[:100]
-            y_train = y_train[:100]
-            X_test = X_test[:100]
-            y_test = y_test[:100]
+            X_train = X_train[:self.BATCH_SIZE*2]
+            y_train = y_train[:self.BATCH_SIZE*2]
+            X_test = X_test[:self.BATCH_SIZE*2]
+            y_test = y_test[:self.BATCH_SIZE*2]
 
         X_train = X_train / 255.0
         X_train = tf.cast(X_train, dtype=tf.float32)
@@ -118,15 +117,15 @@ class Setup:
         if(self.train_model):
 
             print("Start training model...")
-            model.train_for_epochs(self.dataset, self.no_test_images)
+            model.train_for_epochs(self.dataset, self.no_test_images, self.train_dataset_setting, self.model_version)
 
             print("Saving model... ")
             model.save(self.train_dataset_setting, self.model_version, self.epochs)
         else:
 
             print("Loading model... ")
-            model.load(self.train_dataset_setting, self.model_version, self.epochs)
             _ = model.train(self.X_train[:1],self.y_train[:1])
+            model.load(self.train_dataset_setting, self.model_version, self.epochs)
 
         return model
 
