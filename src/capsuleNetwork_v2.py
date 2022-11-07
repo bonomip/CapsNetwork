@@ -120,6 +120,8 @@ class CapsuleNetwork(tf.keras.Model):
         
     def train_for_epochs(self, batches, no_images, name, version):
         
+        save_every_epochs = 1
+
         checkpoint_path = self.get_checkpoint_path(name, version)
         stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 
@@ -159,7 +161,7 @@ class CapsuleNetwork(tf.keras.Model):
                 
                 print_statement = "Loss :" + str(loss.numpy()) + " Accuracy :" + str(accuracy[-1])
 
-                if i % 10 == 0:
+                if i % save_every_epochs == 0:
                     print_statement += ' Checkpoint Saved'
                     checkpoint.save(checkpoint_path+"/ckpt")
                 
