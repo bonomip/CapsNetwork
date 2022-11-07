@@ -107,11 +107,11 @@ def print_confusion_tables(values, columns, index):
     df = df.applymap(trim)
     return df
 
-def print_accuracy(acc_train, acc_test, train_s, test_s):
+def print_accuracy(acc_train, acc_test, train_s, test_s, epochs):
     d = {
     "Accuracy" : [np.around(acc_train, decimals=3), np.around(acc_test, decimals=3)],
     "# Images" : [train_s, test_s],
-    "Epochs" : [10, 10]
+    "Epochs" : [epochs, epochs]
     }
 
     return pd.DataFrame(d, index=["Train", "Test"])
