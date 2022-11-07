@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
+from datetime import datetime
 
 class CapsuleNetwork(tf.keras.Model):
 
@@ -116,7 +117,16 @@ class CapsuleNetwork(tf.keras.Model):
 
         print(test_sum/test_database[0])
         
-    def train_for_epochs(self, batches, no_images):
+    def train_for_epochs(self, batches, no_images, name, version):
+        
+        checkpoint_path = './logs_'+name+'/model'+version
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+
+        logdir = './logs_'+name+'/scalars'+version+'/%s' % stamp
+        file_writer = tf.summary.create_file_writer(logdir + "/metrics")
+
+        checkpoint = tf.train.Checkpoint(model=self)
+
         losses = []
         accuracy = []
         for i in range(1, self.epochs+1, 1):
@@ -142,8 +152,17 @@ class CapsuleNetwork(tf.keras.Model):
                 
                 accuracy.append(training_sum/no_images)
 
+                with file_writer.as_default():
+                    tf.summary.scalar('Loss', data=loss.numpy(), step=i)
+                    tf.summary.scalar('Accuracy', data=accuracy[-1], step=i)
+                
                 print_statement = "Loss :" + str(loss.numpy()) + " Accuracy :" + str(accuracy[-1])
-                pbar.set_postfix_str(print_statement)   
+
+                if i % 10 == 0:
+                    print_statement += ' Checkpoint Saved'
+                    checkpoint.save(checkpoint_path)
+                
+                pbar.set_postfix_str(print_statement)  
 
     @tf.function
     def call(self, inputs):
