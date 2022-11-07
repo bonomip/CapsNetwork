@@ -35,6 +35,7 @@ class Setup:
         self.create_dataset = should_create_dataset
         self.epochs = epochs
         self.debug = debug
+        self.BATCH_SIZE = 64
 
         if not self.debug:
             self.check_for_gpu()
@@ -79,7 +80,6 @@ class Setup:
         return X_, y_
 
     def init_dataset(self):
-        BATCH_SIZE = 64
 
         (X_train, y_train) = self.switch_dataset(self.train_dataset_setting, train=True)
         (X_test, y_test) = self.switch_dataset(self.test_dataset_setting, train=False)
@@ -102,10 +102,10 @@ class Setup:
 
         dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train))
         dataset = dataset.shuffle(buffer_size=len(dataset), reshuffle_each_iteration=True)
-        dataset = dataset.batch(batch_size=BATCH_SIZE)
+        dataset = dataset.batch(batch_size=self.BATCH_SIZE)
 
         testing = tf.data.Dataset.from_tensor_slices((X_test, y_test))
-        testing = testing.batch(batch_size=BATCH_SIZE)
+        testing = testing.batch(batch_size=self.BATCH_SIZE)
 
         return dataset, testing, X_train, y_train, X_test, y_test
 
@@ -145,11 +145,27 @@ class Setup:
     def get_dataset(self):
         return self.dataset
     
-    def get_testing(self):
-        return self.testing
+    def get_testing(self, type="Default"):
+        if type=="Default":
+            return self.testing
+        
+        (self.X_test, self.y_test) = self.switch_dataset(type, train=False)
+        self.X_test = self.X_test / 255.0
+        self.X_test = tf.cast(self.X_test, dtype=tf.float32)
+        self.X_test = tf.expand_dims(self.X_test, axis=-1)
+        self.testing = tf.data.Dataset.from_tensor_slices((self.X_test, self.y_test))
+        self.testing = self.testing.batch(batch_size=self.BATCH_SIZE)
+        self.no_test_images = self.X_train.shape[0]
+
+        return self.testing, self.X_test, self.y_test
     
-    def get_train_images(self):
+    def get_train_images(self, type="Default"):
+        if type=="Default":
             return self.X_train, self.y_train
+
+        a, x, y = self.get_testing(type)
+        
+        return x, y
 
     def get_test_images(self):
             return self.X_test, self.y_test
