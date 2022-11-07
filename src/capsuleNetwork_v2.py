@@ -123,7 +123,7 @@ class CapsuleNetwork(tf.keras.Model):
         checkpoint_path = self.get_checkpoint_path(name, version)
         stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 
-        logdir = './logs_'+name+'/scalars'+version+'/%s' % stamp
+        logdir = './logs/'+name+'/scalars'+version+'/%s' % stamp
         file_writer = tf.summary.create_file_writer(logdir + "/metrics")
 
         checkpoint = tf.train.Checkpoint(model=self)
