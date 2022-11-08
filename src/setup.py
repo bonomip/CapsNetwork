@@ -25,12 +25,29 @@ class Setup:
         "r":3,
     }
 
-    
-
     def __init__(self, debug=False):
         self.debug = debug
-        
         self.check_for_gpu()
+
+############################## MODEL
+
+    def init_model(self, id, version):
+        self.params["id"] = id
+        self.params["version"] = version
+        return capsNet.CapsuleNetwork(**self.params)
+
+    def load_ckpt(self, model, x, y, epochs=0):
+        print("Loading model... ")
+        _ = model.train(x[:32],y[:32])
+        model.load(epochs)
+        return model
+
+    def train_model(self, model, batch, no_img, epochs, start_epoch=0):
+        print("Training model... ")
+        model.train_for_epochs( batch, no_img, epochs, start_epoch)
+        return model
+
+############################## DATASET
 
     def switch_dataset(self, string, train, create, version):
         X_ = 0
@@ -66,24 +83,6 @@ class Setup:
 
         return X_, y_
 
-############################## MODEL
-
-    def init_model(self):
-        return capsNet.CapsuleNetwork(**self.params)
-
-    def load_ckpt(self, model, x, y, id, version, epochs=0):
-        print("Loading model... ")
-        _ = model.train(x[:32],y[:32])
-        model.load(id, version, epochs)
-        return model
-
-    def train_model(self, model, id, version, batch, no_img, epochs, start_epoch=0):
-        print("Training model... ")
-        model.train_for_epochs( batch, no_img, id, version, epochs, start_epoch)
-        return model
-
-############################## DATASET
-
     def _process_data(self, x, y, shuffle):
         if ( self.debug ):
         
@@ -104,12 +103,12 @@ class Setup:
             dataset = dataset.shuffle(buffer_size=len(dataset), reshuffle_each_iteration=True)
         
         dataset = dataset.batch(batch_size=self.BATCH_SIZE)
-        return dataset       
+        return x_, y_, dataset       
 
     def load_data(self, id, train, version="_v1", create=False):
         (x, y) = self.switch_dataset(id, train, create, version)
         print("Processing data... ")
-        batch = self._process_data(x, y, shuffle=train)
+        x, y, batch = self._process_data(x, y, shuffle=train)
 
         return x, y, batch
 
