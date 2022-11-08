@@ -11,6 +11,7 @@ class CapsuleNetwork(tf.keras.Model):
     lambda_ = 0.5
     alpha = 0.0005
     optimizer = tf.keras.optimizers.Adam()
+    save_every_epochs = 1
 
 
     def __init__(self, size, no_of_conv_kernels, no_of_primary_caps_channels, 
@@ -59,19 +60,24 @@ class CapsuleNetwork(tf.keras.Model):
         
     def build(self, input_shape):
         pass
-
-    def set_epochs(self, epochs):
-        self.epochs = epochs
-
-    def get_epochs(self):
-        return self.epochs
     
     def get_checkpoint_path(self, name, version):
         return './logs/'+name+'/model'+version
 
-    def load(self, name, version, epochs):
+    def load_latest(self, name, version):
         checkpoint = tf.train.Checkpoint(model=self)
-        checkpoint.restore(self.get_checkpoint_path(name, version)+"/ckpt-"+str(int(epochs/10)))
+        path = self.get_checkpoint_path(name, version)+"/ckpt-"
+        ckpt = tf.train.latest_checkpoint(path)
+        checkpoint.restore(ckpt)
+
+    def load(self, id, version, epochs=0):
+        if epochs==0:
+            return self.load_latest(id, version)
+    
+        i = int(epochs/self.save_every_epochs)
+
+        checkpoint = tf.train.Checkpoint(model=self)
+        checkpoint.restore(self.get_checkpoint_path(id, version)+"/ckpt-"+str(i))
 
     def squash(self, s):
         with tf.name_scope("SquashFunction") as scope:
@@ -118,42 +124,40 @@ class CapsuleNetwork(tf.keras.Model):
 
         print(test_sum/test_database[0])
         
-    def train_for_epochs(self, batches, no_images, name, version):
+    def train_for_epochs(self, batch, no_img, id, version, epochs, start_epochs=0):
         
-        save_every_epochs = 1
-
-        checkpoint_path = self.get_checkpoint_path(name, version)
+        checkpoint_path = self.get_checkpoint_path(id, version)
         stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 
-        logdir = './logs/'+name+'/scalars'+version+'/%s' % stamp
+        logdir = './logs/'+id+'/scalars'+version+'/%s' % stamp
         file_writer = tf.summary.create_file_writer(logdir + "/metrics")
 
         checkpoint = tf.train.Checkpoint(model=self)
 
         losses = []
         accuracy = []
-        for i in range(1, self.epochs+1, 1):
+        for i in range(start_epochs+1, epochs+1, 1):
 
             loss = 0
-            with tqdm(total=len(batches)) as pbar:
+            with tqdm(total=len(batch)) as pbar:
 
-                description = "Epoch " + str(i) + "/" + str(self.epochs)
+                description = "Epoch " + str(i) + "/" + str(epochs)
                 pbar.set_description_str(description)
-                for X_batch, y_batch in batches:
+                for X_batch, y_batch in batch:
 
                     loss += self.train(X_batch,y_batch)
                     pbar.update(1)
 
-                loss /= len(batches)
+                loss /= len(batch)
                 losses.append(loss.numpy())
                 training_sum = 0
                 print_statement = "Loss :" + str(loss.numpy()) + " Evaluating Accuracy ..."
                 pbar.set_postfix_str(print_statement)
-                for X_batch, y_batch in batches:
+                for X_batch, y_batch in batch:
                     
                     training_sum += sum(self.predict(X_batch)==y_batch.numpy())
                 
-                accuracy.append(training_sum/no_images)
+                accuracy.append(training_sum/no_img)
 
                 with file_writer.as_default():
                     tf.summary.scalar('Loss', data=loss.numpy(), step=i)
@@ -161,7 +165,7 @@ class CapsuleNetwork(tf.keras.Model):
                 
                 print_statement = "Loss :" + str(loss.numpy()) + " Accuracy :" + str(accuracy[-1])
 
-                if i % save_every_epochs == 0:
+                if i % self.save_every_epochs == 0:
                     print_statement += ' Checkpoint Saved'
                     checkpoint.save(checkpoint_path+"/ckpt")
                 
