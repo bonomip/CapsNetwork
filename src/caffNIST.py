@@ -85,7 +85,7 @@ def apply_affine(tensor, description):
     result = tf.stack(images)
     return result
 
-def create_custom_affnist(train, version, r=3):
+def create_custom_affnist(version, train, r=3):
     print("Load MIST dataset from keras... ")
     (a, b), (c , d)= tf.keras.datasets.mnist.load_data()
 
