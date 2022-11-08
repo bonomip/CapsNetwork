@@ -11,7 +11,8 @@ import cWSaffNIST
 
 class Setup:
 
-    d_k = ["MNIST", "Custom_affNIST", "affNIST", "Custom_affNIST_without_shearing"] #dataset keys
+    GEN = ["MNIST", "Custom_affNIST", "affNIST", "Custom_affNIST_without_shearing"] #dataset keys
+    BATCH_SIZE = 64
 
     #architecture params
     params = {
@@ -24,110 +25,95 @@ class Setup:
         "r":3,
     }
 
-    def __init__(self, train_cfg=d_k[1], test_cfg=d_k[1], model_v="_v1", 
-                    db_v="_v1", should_be_trained=False, epochs=10, should_create_dataset=False, debug=False):
+    
 
-        self.train_dataset_setting = train_cfg
-        self.test_dataset_setting = test_cfg
-        self.database_version = db_v
-        self.model_version = model_v
-        self.train_model = should_be_trained
-        self.create_dataset = should_create_dataset
-        self.epochs = epochs
+    def __init__(self, debug=False):
         self.debug = debug
-        self.BATCH_SIZE = 64
-
+        
         self.check_for_gpu()
 
-        self.dataset, self.testing, self.X_train, self.y_train, self.X_test, self.y_test = self.init_dataset()
-        self.no_test_images = self.X_train.shape[0]
-        self.no_train_images = self.X_test.shape[0]        
-        self.model = self.init_model()
-
-    def switch_dataset(self, string, train):
+    def switch_dataset(self, string, train, create, version):
         X_ = 0
         y_ = 0
         
-        if string == self.d_k[0]: # MINST #TODO APPLY PADDING to make it 40x40
+        if string == self.GEN[0]: # MINST #TODO APPLY PADDING to make it 40x40
             
             X_, y_ = MNIST.load(train)
                 
-        elif string == self.d_k[1]: # CUSTOM AFFNIST
+        elif string == self.GEN[1]: # CUSTOM AFFNIST
             
-            if(self.create_dataset):
+            if(create):
                 
-                (X_, y_) = caffNIST.create_custom_affnist(train, self.database_version)
+                (X_, y_) = caffNIST.create_custom_affnist(version, train)
                 
             else:
                 
-                (X_, y_) = caffNIST.load(self.database_version, train)
+                (X_, y_) = caffNIST.load(version, train)
                     
-        elif string == self.d_k[2]: # AFFNIST
+        elif string == self.GEN[2]: # AFFNIST
             
             (X_, y_) = affNIST.load(train)            
 
-        elif string == self.d_k[3]: # CUTOM AFFNIST NO SHEARING
+        elif string == self.GEN[3]: # CUTOM AFFNIST NO SHEARING
 
-            if(self.create_dataset):
+            if(create):
                 
-                (X_, y_) = cWSaffNIST.create_custom_affnist_without_shearing(train, self.database_version)
+                (X_, y_) = cWSaffNIST.create_custom_affnist_without_shearing(version, train)
                 
             else:
                 
-                (X_, y_) = cWSaffNIST.load(self.database_version, train)
+                (X_, y_) = cWSaffNIST.load(version, train)
 
         return X_, y_
 
-    def init_dataset(self):
-
-        (X_train, y_train) = self.switch_dataset(self.train_dataset_setting, train=True)
-        (X_test, y_test) = self.switch_dataset(self.test_dataset_setting, train=False)
-        
-        print("Processing dataset... ")
-
-        if ( self.debug ):
-            X_train = X_train[:self.BATCH_SIZE*2]
-            y_train = y_train[:self.BATCH_SIZE*2]
-            X_test = X_test[:self.BATCH_SIZE*2]
-            y_test = y_test[:self.BATCH_SIZE*2]
-
-        X_train = X_train / 255.0
-        X_train = tf.cast(X_train, dtype=tf.float32)
-        X_train = tf.expand_dims(X_train, axis=-1)
-
-        X_test = X_test / 255.0
-        X_test = tf.cast(X_test, dtype=tf.float32)
-        X_test = tf.expand_dims(X_test, axis=-1)
-
-        dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train))
-        dataset = dataset.shuffle(buffer_size=len(dataset), reshuffle_each_iteration=True)
-        dataset = dataset.batch(batch_size=self.BATCH_SIZE)
-
-        testing = tf.data.Dataset.from_tensor_slices((X_test, y_test))
-        testing = testing.batch(batch_size=self.BATCH_SIZE)
-
-        return dataset, testing, X_train, y_train, X_test, y_test
+############################## MODEL
 
     def init_model(self):
-        
-        print("Creating model... ")
-        model = capsNet.CapsuleNetwork(**self.params)
-        model.set_epochs(self.epochs)
+        return capsNet.CapsuleNetwork(**self.params)
 
-        if(self.train_model):
-
-            print("Start training model...")
-            model.train_for_epochs(self.dataset, self.no_test_images, self.train_dataset_setting, self.model_version)
-
-            print("Saving model... ")
-            model.save(self.train_dataset_setting, self.model_version, self.epochs)
-        else:
-
-            print("Loading model... ")
-            _ = model.train(self.X_train[:1],self.y_train[:1])
-            model.load(self.train_dataset_setting, self.model_version, self.epochs)
-
+    def load_ckpt(self, model, x, y, id, version, epochs=0):
+        print("Loading model... ")
+        _ = model.train(x[:32],y[:32])
+        model.load(id, version, epochs)
         return model
+
+    def train_model(self, model, id, version, batch, no_img, epochs, start_epoch=0):
+        print("Training model... ")
+        model.train_for_epochs( batch, no_img, id, version, epochs, start_epoch)
+        return model
+
+############################## DATASET
+
+    def _process_data(self, x, y, shuffle):
+        if ( self.debug ):
+        
+            x_ = x[:self.BATCH_SIZE]
+            y_ = y[:self.BATCH_SIZE]
+        
+        else:
+        
+            x_ = x
+            y_ = y
+
+        x_ = x_ / 255.0
+        x_ = tf.cast(x_, dtype=tf.float32)
+        x_ = tf.expand_dims(x_, axis=-1)
+        dataset = tf.data.Dataset.from_tensor_slices((x_, y_))
+        if shuffle:
+
+            dataset = dataset.shuffle(buffer_size=len(dataset), reshuffle_each_iteration=True)
+        
+        dataset = dataset.batch(batch_size=self.BATCH_SIZE)
+        return dataset       
+
+    def load_data(self, id, train, version="_v1", create=False):
+        (x, y) = self.switch_dataset(id, train, create, version)
+        print("Processing data... ")
+        batch = self._process_data(x, y, shuffle=train)
+
+        return x, y, batch
+
+############################# GPU CHECK
 
     def check_for_gpu(self):
         device_name = tf.test.gpu_device_name()
@@ -138,40 +124,5 @@ class Setup:
 
     ########################## GET OBJECTS
 
-    def get_model(self):
-        return self.model    
-    
-    def get_dataset(self):
-        return self.dataset
-    
-    def get_testing(self, type="Default"):
-        if type=="Default":
-            return self.testing
-        
-        (self.X_test, self.y_test) = self.switch_dataset(type, train=False)
-        self.X_test = self.X_test / 255.0
-        self.X_test = tf.cast(self.X_test, dtype=tf.float32)
-        self.X_test = tf.expand_dims(self.X_test, axis=-1)
-        self.testing = tf.data.Dataset.from_tensor_slices((self.X_test, self.y_test))
-        self.testing = self.testing.batch(batch_size=self.BATCH_SIZE)
-        self.no_test_images = self.X_train.shape[0]
-
-        return self.testing, self.X_test, self.y_test
-    
-    def get_train_images(self, type="Default"):
-        if type=="Default":
-            return self.X_train, self.y_train
-
-        a, x, y = self.get_testing(type)
-        
-        return x, y
-
-    def get_test_images(self):
-            return self.X_test, self.y_test
-
-    def get_no_train_images(self):
-            return self.no_test_images
-    
-    def get_no_test_images(self):
-            return self.no_train_images
-    
+    def get_total_images(self, x):
+        return x.shape[0]   
