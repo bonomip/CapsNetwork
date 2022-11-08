@@ -138,7 +138,7 @@ class CapsuleNetwork(tf.keras.Model):
         file_writer = tf.summary.create_file_writer(logdir + "/metrics")
         checkpoint = tf.train.Checkpoint(model=self)
 
-        checkpoint.save_counter.assign_add(self._epochs_to_cpkt(epochs))
+        checkpoint.save_counter.assign_add(self._epochs_to_cpkt(start_epochs))
 
         losses = []
         accuracy = []
