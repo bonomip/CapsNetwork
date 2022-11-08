@@ -15,9 +15,12 @@ class CapsuleNetwork(tf.keras.Model):
 
 
     def __init__(self, size, no_of_conv_kernels, no_of_primary_caps_channels, 
-                    no_of_secondary_capsules, primary_capsule_vector, secondary_capsule_vector, r ):
+                    no_of_secondary_capsules, primary_capsule_vector, secondary_capsule_vector, r, id, version):
         
         super(CapsuleNetwork, self).__init__()
+
+        self.model_id = id
+        self.model_version = version
         
         self.no_of_conv_kernels = no_of_conv_kernels
         self.no_of_primary_caps_channels = no_of_primary_caps_channels
@@ -61,23 +64,26 @@ class CapsuleNetwork(tf.keras.Model):
     def build(self, input_shape):
         pass
     
-    def get_checkpoint_path(self, name, version):
-        return './logs/'+name+'/model'+version
+    def _epochs_to_cpkt(self, epochs):
+        return int(epochs/self.save_every_epochs)
 
-    def load_latest(self, name, version):
+    def get_checkpoint_path(self):
+        return './logs/'+self.model_id+'/model'+self.model_version
+
+    def load_latest(self):
         checkpoint = tf.train.Checkpoint(model=self)
-        path = self.get_checkpoint_path(name, version)+"/ckpt-"
+        path = self.get_checkpoint_path()+"/ckpt-"
         ckpt = tf.train.latest_checkpoint(path)
         checkpoint.restore(ckpt)
 
-    def load(self, id, version, epochs=0):
+    def load(self, epochs=0):
         if epochs==0:
-            return self.load_latest(id, version)
+            return self.load_latest()
     
-        i = int(epochs/self.save_every_epochs)
+        i = self._epochs_to_cpkt(epochs)
 
         checkpoint = tf.train.Checkpoint(model=self)
-        checkpoint.restore(self.get_checkpoint_path(id, version)+"/ckpt-"+str(i))
+        checkpoint.restore(self.get_checkpoint_path()+"/ckpt-"+str(i))
 
     def squash(self, s):
         with tf.name_scope("SquashFunction") as scope:
@@ -123,16 +129,16 @@ class CapsuleNetwork(tf.keras.Model):
             test_sum += sum(self.predict(X_batch)==y_batch.numpy())
 
         print(test_sum/test_database[0])
+
+    def train_for_epochs(self, batch, no_img, epochs, start_epochs=0):
         
-    def train_for_epochs(self, batch, no_img, id, version, epochs, start_epochs=0):
-        
-        checkpoint_path = self.get_checkpoint_path(id, version)
+        checkpoint_path = self.get_checkpoint_path()
         stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-
-        logdir = './logs/'+id+'/scalars'+version+'/%s' % stamp
+        logdir = './logs/'+self.model_id+'/scalars'+self.model_version+'/%s' % stamp
         file_writer = tf.summary.create_file_writer(logdir + "/metrics")
-
         checkpoint = tf.train.Checkpoint(model=self)
+
+        checkpoint.save_counter.assign_add(self._epochs_to_cpkt(epochs))
 
         losses = []
         accuracy = []
