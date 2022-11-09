@@ -114,8 +114,13 @@ class Setup:
 
 ############################# VALIDATION
 
-    def get_accuracy(self, model, x, y):
-        pass
+    def get_accuracy(self, model, batch, no_img):
+        training_sum = 0
+        for X_batch, y_batch in batch:
+                    
+            training_sum += sum(model.predict(X_batch)==y_batch.numpy())
+
+        return training_sum/no_img
 
 ############################# GPU CHECK
 
