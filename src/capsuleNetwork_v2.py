@@ -130,49 +130,25 @@ class CapsuleNetwork(tf.keras.Model):
 
         print(test_sum/test_database[0])
 
-    def train_for_epochs(self, batch, no_img, epochs, start_epochs=0):
+    def train_for_epochs(self, batch, epochs, start_epochs=0):
         
         checkpoint_path = self.get_checkpoint_path()
-        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        logdir = './logs/'+self.model_id+'/scalars'+self.model_version+'/%s' % stamp
-        file_writer = tf.summary.create_file_writer(logdir + "/metrics")
         checkpoint = tf.train.Checkpoint(model=self)
-
         checkpoint.save_counter.assign_add(self._epochs_to_cpkt(start_epochs))
 
-        losses = []
-        accuracy = []
         for i in range(start_epochs+1, epochs+1, 1):
 
-            loss = 0
             with tqdm(total=len(batch)) as pbar:
 
                 description = "Epoch " + str(i) + "/" + str(epochs)
                 pbar.set_description_str(description)
                 for X_batch, y_batch in batch:
 
-                    loss += self.train(X_batch,y_batch)
+                    self.train(X_batch,y_batch)
                     pbar.update(1)
 
-                loss /= len(batch)
-                losses.append(loss.numpy())
-                training_sum = 0
-                print_statement = "Loss :" + str(loss.numpy()) + " Evaluating Accuracy ..."
-                pbar.set_postfix_str(print_statement)
-                for X_batch, y_batch in batch:
-                    
-                    training_sum += sum(self.predict(X_batch)==y_batch.numpy())
-                
-                accuracy.append(training_sum/no_img)
-
-                with file_writer.as_default():
-                    tf.summary.scalar('Loss', data=loss.numpy(), step=i)
-                    tf.summary.scalar('Accuracy', data=accuracy[-1], step=i)
-                
-                print_statement = "Loss :" + str(loss.numpy()) + " Accuracy :" + str(accuracy[-1])
-
                 if i % self.save_every_epochs == 0:
-                    print_statement += ' Checkpoint Saved'
+                    print_statement = ' Checkpoint Saved'
                     checkpoint.save(checkpoint_path+"/ckpt")
                 
                 pbar.set_postfix_str(print_statement)  
