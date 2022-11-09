@@ -3,6 +3,7 @@ sys.path.append("./src")
 from setup import Setup # set up model and dataset
 import argparse
 
+#number of checkpoints physically inside log/model directory
 no_ckpt = 16
 
 parser=argparse.ArgumentParser()
@@ -15,57 +16,31 @@ parser.add_argument("--model",
                         "1="+str(Setup.GEN[1])+"; "+
                         "2="+str(Setup.GEN[2])+"; "+
                         "3="+str(Setup.GEN[3]))
-
 parser.add_argument("--epochs",
                     choices=range(1,no_ckpt+1),
                     type=int,
                     required=True,
                     metavar="No. EPOCHS")  
-
 parser.add_argument("-d",
                     default=False,
                     action='store_true')   
-
 args=parser.parse_args()
 
-##########
-########## MODEL TO EVALUATE
-##########
-#
-#
+#model to evaluate
 model_id = Setup.GEN[args.model]
-#
-#
-##########
-########## NO. OF CHECKPONT
-##########
-#
-#
+#how many ckpt -- usually max ~ 50
 tot_ckpt = int(int(args.epochs))
-#
-#
-##########
-########## MODEL & DATA VERSION
-##########
-#
-#
+#model and dataset version
 model_version = "_v1"
 dataset_version = "_v1"
-#
-#
-##########
-##########
-##########
-#
-#
-#
-print(args.d)
+
+# init desired model, and retrive it's train dataset
 setup = Setup(debug=args.d)
 X_train, y_train, dataset = setup.load_data(model_id, train=True, version=dataset_version, create=False)
 model = setup.init_model(model_id, model_version)
 
+# evaluate accuracy for each epoch on each dataset
 s_epochs = []
-
 for i in range(1, tot_ckpt+1):
     s2 = " @ "+str(i)+"-th Epoch"
     s = "on "+model_id+s2
@@ -80,6 +55,7 @@ for i in range(1, tot_ckpt+1):
     
     s_epochs.append(accuracies)
 
+# display the result
 print("\n--------- MODEL "+model_id+model_version+" ---------\n")
 for i in range(len(s_epochs)):
     print("--------- "+str(i+1)+"-th EPOCH ---------")

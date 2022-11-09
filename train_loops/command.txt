@@ -1,1 +1,0 @@
-python MINST.py & python affNIST.py & python caffNIST.py & python cWSaffNIST.py

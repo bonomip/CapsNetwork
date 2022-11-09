@@ -1,5 +1,7 @@
 # project files
+test.py
 logs/
+logs_google/
 .DS_Store
 img/
 .ipynb_checkpoints/
