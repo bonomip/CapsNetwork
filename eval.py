@@ -24,6 +24,11 @@ parser.add_argument("--epochs",
 parser.add_argument("-d",
                     default=False,
                     action='store_true')   
+
+parser.add_argument("--no-gpu",
+                    default=False,
+                    action='store_true') 
+
 args=parser.parse_args()
 
 #model to evaluate
@@ -35,7 +40,7 @@ model_version = "_v1"
 dataset_version = "_v1"
 
 # init desired model, and retrive it's train dataset
-setup = Setup(debug=args.d)
+setup = Setup(debug=args.d, no_gpu_check=args.no_gpu)
 X_train, y_train, dataset = setup.load_data(model_id, train=True, version=dataset_version, create=False)
 model = setup.init_model(model_id, model_version)
 

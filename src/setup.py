@@ -26,9 +26,10 @@ class Setup:
         "r":3,
     }
 
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, no_gpu_check=False):
         self.debug = debug
-        self.check_for_gpu()
+        if not no_gpu_check:
+            self.check_for_gpu()
 
 ############################## MODEL
 
