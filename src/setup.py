@@ -42,9 +42,9 @@ class Setup:
         model.load(epochs)
         return model
 
-    def train_model(self, model, batch, no_img, epochs, start_epoch=0):
+    def train_model(self, model, batch, epochs, start_epoch=0):
         print("Training model... ")
-        model.train_for_epochs( batch, no_img, epochs, start_epoch)
+        model.train_for_epochs( batch, epochs, start_epoch)
         return model
 
 ############################## DATASET
@@ -111,6 +111,11 @@ class Setup:
         x, y, batch = self._process_data(x, y, shuffle=train)
 
         return x, y, batch
+
+############################# VALIDATION
+
+    def get_accuracy(self, model, x, y):
+        pass
 
 ############################# GPU CHECK
 

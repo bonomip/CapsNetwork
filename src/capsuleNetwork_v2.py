@@ -122,14 +122,6 @@ class CapsuleNetwork(tf.keras.Model):
         self.optimizer.apply_gradients(zip(grad, self.trainable_variables))
         return loss
 
-    def gerAccuracy(self, test_database):
-        test_sum = 0
-        for X_batch, y_batch in test_database:
-            
-            test_sum += sum(self.predict(X_batch)==y_batch.numpy())
-
-        print(test_sum/test_database[0])
-
     def train_for_epochs(self, batch, epochs, start_epochs=0):
         
         checkpoint_path = self.get_checkpoint_path()
