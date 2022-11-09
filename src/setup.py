@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+from tqdm import tqdm
 
 ## project class import
 
@@ -114,11 +115,16 @@ class Setup:
 
 ############################# VALIDATION
 
-    def get_accuracy(self, model, batch, no_img):
+    def get_accuracy(self, model, batch, no_img, description=""):
         training_sum = 0
-        for X_batch, y_batch in batch:
-                    
-            training_sum += sum(model.predict(X_batch)==y_batch.numpy())
+        
+        with tqdm(total=len(batch)) as pbar:
+            description = "Evaluating accuracy "+description
+            pbar.set_description_str(description)
+            for X_batch, y_batch in batch:
+                        
+                training_sum += sum(model.predict(X_batch)==y_batch.numpy())
+                pbar.update(1)
 
         return training_sum/no_img
 
