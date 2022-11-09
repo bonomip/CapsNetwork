@@ -6,7 +6,7 @@ import argparse
 no_ckpt = 16
 
 parser=argparse.ArgumentParser()
-parser.add_argument("--model", 
+parser.add_argument("--model",
                     metavar="ID",
                     choices=range(0,4), 
                     type=int,
@@ -16,11 +16,16 @@ parser.add_argument("--model",
                         "2="+str(Setup.GEN[2])+"; "+
                         "3="+str(Setup.GEN[3]))
 
-parser.add_argument("--epochs", 
+parser.add_argument("--epochs",
                     choices=range(1,no_ckpt+1),
                     type=int,
                     required=True,
-                    metavar="No. EPOCHS")     
+                    metavar="No. EPOCHS")  
+
+parser.add_argument("-d",
+                    default=False,
+                    action='store_true')   
+
 args=parser.parse_args()
 
 ##########
@@ -54,8 +59,8 @@ dataset_version = "_v1"
 #
 #
 #
-
-setup = Setup(debug=True)
+print(args.d)
+setup = Setup(debug=args.d)
 X_train, y_train, dataset = setup.load_data(model_id, train=True, version=dataset_version, create=False)
 model = setup.init_model(model_id, model_version)
 
