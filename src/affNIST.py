@@ -38,19 +38,31 @@ def _todict(matobj):
             dict[strg] = elem
     return dict
 
+def _unpack(dataset):
+    ans_set = dataset['affNISTdata']['label_int']
+    img_set = dataset['affNISTdata']['image']
+
+    img_set = np.transpose(img_set)
+    img_set = np.reshape(img_set, (-1, 40, 40))
+    ans_set = ans_set.astype(np.uint8)
+
+    return img_set,ans_set
+
 def load(train):
     s = "training" if train else "test"
 
     print("Load AffNIST "+s+" dataset... ")
 
-    path = './data/affNIST/'+s+'_batches/1.mat'
-    dataset = loadmat(path) 
+    if train:
+        img_set = np.empty((0, 40, 40), dtype=np.uint8)
+        ans_set = np.empty((0,), dtype=np.uint8)
+        for i in range(1, 5):
+            path = './data/affNIST/'+s+'_batches/'+str(i)+'.mat'
+            x, y = _unpack(loadmat(path))
+            img_set = np.concatenate((img_set, x), axis=0)
+            ans_set = np.concatenate((ans_set, y), axis=0) 
+    else:
+        path = './data/affNIST/'+s+'_batches/1.mat'
+        img_set, ans_set = _unpack(loadmat(path))
 
-    ans_set = dataset['affNISTdata']['label_int']
-    test_set = dataset['affNISTdata']['image']
-
-    test_set = np.transpose(test_set)
-    test_set = np.reshape(test_set, (-1, 40, 40))
-    ans_set = ans_set.astype(np.uint8)
-
-    return test_set,ans_set
+    return img_set,ans_set
