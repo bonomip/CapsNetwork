@@ -94,6 +94,7 @@ class CapsuleNetwork(tf.keras.Model):
         v_ = tf.reduce_sum(tf.square(v), axis = axis, keepdims=True)
         return tf.sqrt(v_ + epsilon)
 
+    @tf.function
     def predict(self, x):
         pred = self.safe_norm(self.predict_capsule_output(x))
         pred = tf.squeeze(pred, [1])
@@ -112,6 +113,7 @@ class CapsuleNetwork(tf.keras.Model):
         
         return loss
 
+    @tf.function
     def train(self, x,y):
         y_one_hot = tf.one_hot(y, depth=10)
         with tf.GradientTape() as tape:
