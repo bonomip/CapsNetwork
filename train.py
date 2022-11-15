@@ -18,6 +18,12 @@ parser.add_argument("-f",
                     type=int,
                     required=True,
                     metavar="First epoch to be considered")                 
+parser.add_argument("--model-version",
+                    default="_v1",
+                    type=str) 
+parser.add_argument("--dataset-version",
+                    default="_v1",
+                    type=str)
 parser.add_argument("-d",
                     default=False,
                     action='store_true')   
@@ -26,14 +32,19 @@ parser.add_argument("--no-gpu",
                     action='store_true') 
 args=parser.parse_args()
 
+#model to evaluate
 model_id = Setup.GEN[args.model]
-model_version = "_v1"
-dataset_version = "_v1"
+#model and dataset version
+model_version = args.model_version
+dataset_version = args.dataset_version
+#checkpoint to load and start train from
 last_epoch = args.f
 
+#load model ckpt and dataset
 setup = Setup(debug=args.d, no_gpu_check=args.no_gpu)
 X_train, y_train, dataset = setup.load_data(model_id, train=True, version=dataset_version, create=False)
 model = setup.init_model(model_id, model_version)
 model = setup.load_ckpt(model, X_train, y_train, epochs=last_epoch)
 
+#train model
 model = setup.train_model(model, dataset, epochs=50, start_epoch=last_epoch)

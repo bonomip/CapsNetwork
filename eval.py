@@ -62,6 +62,12 @@ parser.add_argument("-t",
 parser.add_argument("-d",
                     default=False,
                     action='store_true')   
+parser.add_argument("--model-version",
+                    default="_v1",
+                    type=str) 
+parser.add_argument("--dataset-version",
+                    default="_v1",
+                    type=str)
 parser.add_argument("--no-gpu",
                     default=False,
                     action='store_true') 
@@ -73,10 +79,10 @@ model_id = Setup.GEN[args.model]
 if (args.t - args.f) < 0:
   raise Exception("Sorry, no numbers below zero")  
 #model and dataset version
-model_version = "_v1"
-dataset_version = "_v1"
+model_version = args.model_version
+dataset_version = args.dataset_version
 #path where result would be saved
-file_path = "./"+model_id+".txt"
+file_path = "./"+model_id+model_version+".txt"
 
 #init file if first time -- THIS WOULD RESET THE FILE
 if args.f == 1:
