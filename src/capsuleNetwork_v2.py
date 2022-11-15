@@ -10,7 +10,8 @@ class CapsuleNetwork(tf.keras.Model):
     m_minus = 0.1
     lambda_ = 0.5
     alpha = 0.0005
-    optimizer = tf.keras.optimizers.Adam()
+    learning_rate = 5e-4
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
     save_every_epochs = 1
 
 
@@ -94,7 +95,6 @@ class CapsuleNetwork(tf.keras.Model):
         v_ = tf.reduce_sum(tf.square(v), axis = axis, keepdims=True)
         return tf.sqrt(v_ + epsilon)
 
-    @tf.function
     def predict(self, x):
         pred = self.safe_norm(self.predict_capsule_output(x))
         pred = tf.squeeze(pred, [1])
