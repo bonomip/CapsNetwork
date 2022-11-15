@@ -1,11 +1,13 @@
+import re
 import sys
+import argparse
 sys.path.append("./src")
 from setup import Setup # set up model and dataset
-import argparse
-import re
+
+
 
 #number of checkpoints physically inside log/model directory
-no_ckpt = 16
+no_ckpt = 50
 
 #function to make a pretty format
 def make_header(name):
