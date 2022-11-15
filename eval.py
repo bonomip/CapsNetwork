@@ -9,6 +9,14 @@ from setup import Setup # set up model and dataset
 #number of checkpoints physically inside log/model directory
 no_ckpt = 50
 
+def get_all_datasets(setup, model_id, dataset_version):
+    data = []
+    x, y, b = setup.load_data(model_id, train=True, version=dataset_version, create=False)
+    data = data + [x, y, b]
+    for i in range(len(Setup.GEN)):
+        x, y, b = setup.load_data(Setup.GEN[i], train=False, version=dataset_version, create=False)
+        data = data + [x, y, b]
+    return data
 #function to make a pretty format
 def make_header(name):
     #padding for header
@@ -90,20 +98,25 @@ if args.f == 1:
     file.write("\n"+make_header(model_id)+"\n")
     file.close()
 
-# init desired model, and retrive it's train dataset
+#create setup object
 setup = Setup(debug=args.d, no_gpu_check=args.no_gpu)
-X_train, y_train, dataset = setup.load_data(model_id, train=True, version=dataset_version, create=False)
+# retrieve all datasets
+data = get_all_datasets(setup, model_id, dataset_version)
+#extract train ones
+X_train, y_train, dataset = [data[i] for i in (0, 1, 2)]
+#remove train data from array
+data = data[3:]
+#init model
 model = setup.init_model(model_id, model_version)
 
 # evaluate accuracy for each epoch on each dataset
 for i in range(args.f, args.t+1):
     #array where accuracies would be stored
-    # idx 0: train set
-    # idx from 1 to 4: test sets
+    # idx -> 0: train set; from 1 to 4 -> test sets
     accuracies = []
-    #string for progression bar
+    #description string for progression bar
     s2 = " @ "+str(i)+"-th Epoch"
-    s = "on "+model_id+s2
+    s = "on train "+model_id+s2
     #load ckpt for current epoch
     setup.load_ckpt(model, X_train, y_train, i)
     #evaluate accuray on train set
@@ -112,7 +125,7 @@ for i in range(args.f, args.t+1):
     
         #evaluate accuracy on test sets
         s = "on "+Setup.GEN[j]+s2
-        X_test, y_test, testing = setup.load_data(Setup.GEN[j], train=False, version=dataset_version, create=False)
+        X_test, y_test, testing = [data[i] for i in ((j*3)+0, (j*3)+1, (j*3)+2)]
         accuracies.append(setup.get_accuracy(model, testing, setup.get_total_images(X_test), s))
     
     #convert accuracy to string
