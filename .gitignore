@@ -2,6 +2,7 @@
 test.py
 logs/
 docs/google/
+docs/results/
 .DS_Store
 img/
 .ipynb_checkpoints/
