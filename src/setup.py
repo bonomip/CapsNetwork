@@ -44,9 +44,9 @@ class Setup:
         model.load(epochs)
         return model
 
-    def train_model(self, model, batch, epochs, start_epoch=0):
+    def train_model(self, model, batch, epochs, start_epoch=0, v_batch=0):
         print("Training model... ")
-        model.train_for_epochs( batch, epochs, start_epoch)
+        model.train_for_epochs( batch, epochs, start_epoch, v_batch=v_batch)
         return model
 
 ############################## DATASET

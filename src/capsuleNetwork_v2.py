@@ -124,28 +124,64 @@ class CapsuleNetwork(tf.keras.Model):
         self.optimizer.apply_gradients(zip(grad, self.trainable_variables))
         return loss
 
-    def train_for_epochs(self, batch, epochs, start_epochs=0):
+    def train_for_epochs(self, batch, epochs, start_epochs=0, v_batch=0):
         
         checkpoint_path = self.get_checkpoint_path()
         checkpoint = tf.train.Checkpoint(model=self)
         checkpoint.save_counter.assign_add(self._epochs_to_cpkt(start_epochs))
 
-        for i in range(start_epochs+1, epochs+1, 1):
+        #early stopping parameters
+        patience = 5
+        wait = 0
+        best = 0
 
+        #epochs loop
+        for i in range(start_epochs+1, epochs+1, 1):
+        
             with tqdm(total=len(batch)) as pbar:
 
-                description = "Epoch " + str(i) + "/" + str(epochs)
-                pbar.set_description_str(description)
+                pbar.set_description_str("Epoch " + str(i) + "/" + str(epochs))
+                pbar.set_postfix({'patience': patience})  
+                #train loop
                 for X_batch, y_batch in batch:
 
                     self.train(X_batch,y_batch)
                     pbar.update(1)
 
+                #save checkpoint    
                 if i % self.save_every_epochs == 0:
-                    print_statement = ' Checkpoint Saved'
+                    
+                    pbar.set_postfix_str('saving ckpt...')  
                     checkpoint.save(checkpoint_path+"/ckpt")
+
+                #early stopping    
+                if(v_batch != 0):
+                    
+                    pbar.set_postfix_str('eval...')  
+                    training_sum = 0
+                    total_img = 0
+                    #evaluate accuracy on validation set
+                    for X_batch, y_batch in v_batch:
+                        
+                        total_img += X_batch.shape[0]
+                        training_sum += sum(self.predict(X_batch)==y_batch.numpy())
+
+                    accuracy = training_sum/total_img
+                    pbar.set_postfix({'acc': accuracy})
+                    wait += 1
+                    #if the model is improving
+                    if accuracy > best:
+
+                        best = accuracy
+                        wait = 0
+                    #if the model is overfitting
+                    if wait >= patience:
+
+                        pbar.set_postfix_str('early stopped!')
+                        break
                 
-                pbar.set_postfix_str(print_statement)  
+               
+            
 
     @tf.function
     def call(self, inputs):

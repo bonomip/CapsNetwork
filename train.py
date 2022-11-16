@@ -30,6 +30,9 @@ parser.add_argument("-d",
 parser.add_argument("--no-gpu",
                     default=False,
                     action='store_true') 
+parser.add_argument("--early-stopping",
+                    default=False,
+                    action='store_true') 
 args=parser.parse_args()
 
 #model to evaluate
@@ -46,5 +49,9 @@ X_train, y_train, dataset = setup.load_data(model_id, train=True, version=datase
 model = setup.init_model(model_id, model_version)
 model = setup.load_ckpt(model, X_train, y_train, epochs=last_epoch)
 
-#train model
-model = setup.train_model(model, dataset, epochs=50, start_epoch=last_epoch)
+#load validation set for early stopping
+if args.early_stopping:
+
+    X_test, y_test, testing = setup.load_data(model_id, train=False, version=dataset_version, create=False)
+
+model = setup.train_model(model, dataset, epochs=50, start_epoch=last_epoch, v_batch=testing)
