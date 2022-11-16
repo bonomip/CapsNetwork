@@ -114,9 +114,10 @@ for i in range(args.f, args.t+1):
     #array where accuracies would be stored
     # idx -> 0: train set; from 1 to 4 -> test sets
     accuracies = []
+    #print current epoch on terminal
+    print("---- "+str(i)+"-th Epoch ----")
     #description string for progression bar
-    s2 = " @ "+str(i)+"-th Epoch"
-    s = "on train "+model_id+s2
+    s = "- "+model_id+" train"
     #load ckpt for current epoch
     setup.load_ckpt(model, X_train, y_train, i)
     #evaluate accuray on train set
@@ -124,7 +125,7 @@ for i in range(args.f, args.t+1):
     for j in range(len(Setup.GEN)):
     
         #evaluate accuracy on test sets
-        s = "on "+Setup.GEN[j]+s2
+        s = "- "+Setup.GEN[j]
         X_test, y_test, testing = [data[i] for i in ((j*3)+0, (j*3)+1, (j*3)+2)]
         accuracies.append(setup.get_accuracy(model, testing, setup.get_total_images(X_test), s))
     

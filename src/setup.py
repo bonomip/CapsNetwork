@@ -118,10 +118,9 @@ class Setup:
 
     def get_accuracy(self, model, batch, no_img, description=""):
         training_sum = 0
-        
+        s = "Eval. accuracy "+description
         with tqdm(total=len(batch)) as pbar:
-            description = "Evaluating accuracy "+description
-            pbar.set_description_str(description)
+            pbar.set_description_str(s)
             for X_batch, y_batch in batch:
                         
                 training_sum += sum(model.predict(X_batch)==y_batch.numpy())
