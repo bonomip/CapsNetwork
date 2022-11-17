@@ -77,8 +77,8 @@ class CapsuleNetwork(tf.keras.Model):
         ckpt = tf.train.latest_checkpoint(path)
         checkpoint.restore(ckpt)
 
-    def load(self, epochs=0):
-        if epochs==0:
+    def load(self, epochs=-1):
+        if epochs<0:
             return self.load_latest()
     
         i = self._epochs_to_cpkt(epochs)
@@ -153,6 +153,8 @@ class CapsuleNetwork(tf.keras.Model):
                     
                     pbar.set_postfix_str('saving ckpt...')  
                     checkpoint.save(checkpoint_path+"/ckpt")
+
+                pbar.set_postfix_str('')  
 
                 #early stopping    
                 if(v_batch != 0):
