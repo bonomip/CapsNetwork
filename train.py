@@ -50,6 +50,7 @@ model = setup.init_model(model_id, model_version)
 model = setup.load_ckpt(model, X_train, y_train, epochs=last_epoch)
 
 #load validation set for early stopping
+testing = 0
 if args.early_stopping:
 
     X_test, y_test, testing = setup.load_data(model_id, train=False, version=dataset_version, create=False)
