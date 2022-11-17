@@ -39,7 +39,10 @@ class Setup:
         self.params["version"] = version
         return capsNet.CapsuleNetwork(**self.params)
 
-    def load_ckpt(self, model, x, y, epochs=0):
+    def load_ckpt(self, model, x, y, epochs=-1):
+        if(epochs==0):
+            return model
+
         print("Loading model... ")
         _ = model.train(x[:32],y[:32])
         model.load(epochs)
