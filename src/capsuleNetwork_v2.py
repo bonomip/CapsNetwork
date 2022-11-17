@@ -141,7 +141,7 @@ class CapsuleNetwork(tf.keras.Model):
             with tqdm(total=len(batch)) as pbar:
 
                 pbar.set_description_str("Epoch " + str(i) + "/" + str(epochs))
-                pbar.set_postfix({'patience': patience})  
+                pbar.set_postfix({'patience': wait})  
                 #train loop
                 for X_batch, y_batch in batch:
 
