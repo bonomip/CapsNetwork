@@ -14,6 +14,7 @@ class Setup:
 
     GEN = ["MNIST", "Custom_affNIST", "affNIST", "Custom_affNIST_without_shearing"] #dataset keys
     BATCH_SIZE = 64
+    DEBUG_NO_MINI_BATCH = 10
 
     #architecture params
     params = {
@@ -88,8 +89,8 @@ class Setup:
     def _process_data(self, x, y, shuffle):
         if ( self.debug ):
         
-            x_ = x[:self.BATCH_SIZE]
-            y_ = y[:self.BATCH_SIZE]
+            x_ = x[:self.BATCH_SIZE*self.DEBUG_NO_MINI_BATCH]
+            y_ = y[:self.BATCH_SIZE*self.DEBUG_NO_MINI_BATCH]
         
         else:
         
