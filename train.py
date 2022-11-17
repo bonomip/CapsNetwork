@@ -17,7 +17,12 @@ parser.add_argument("-f",
                     choices=range(0, 49),
                     type=int,
                     required=True,
-                    metavar="First epoch to be considered")                 
+                    metavar="First epoch to be considered")
+parser.add_argument("--patience",
+                    choices=range(0, Setup.get_model_patience()),
+                    type=int,
+                    required=True,
+                    metavar="First epoch to be considered")               
 parser.add_argument("--model-version",
                     default="_v1",
                     type=str) 
@@ -55,4 +60,4 @@ if args.early_stopping:
 
     X_test, y_test, testing = setup.load_data(model_id, train=False, version=dataset_version, create=False)
 
-model = setup.train_model(model, dataset, epochs=50, start_epoch=last_epoch, v_batch=testing)
+model = setup.train_model(model, dataset, epochs=50, start_epoch=last_epoch, v_batch=testing, start_patience=args.patience)

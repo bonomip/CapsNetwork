@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 ## project class import
 
-import capsuleNetwork_v2 as capsNet
+from capsuleNetwork_v2 import CapsuleNetwork as CapsNet
 import affNIST
 import caffNIST
 import MNIST
@@ -37,7 +37,7 @@ class Setup:
     def init_model(self, id, version):
         self.params["id"] = id
         self.params["version"] = version
-        return capsNet.CapsuleNetwork(**self.params)
+        return CapsNet(**self.params)
 
     def load_ckpt(self, model, x, y, epochs=-1):
         if(epochs==0):
@@ -48,9 +48,9 @@ class Setup:
         model.load(epochs)
         return model
 
-    def train_model(self, model, batch, epochs, start_epoch=0, v_batch=0):
+    def train_model(self, model, batch, epochs, start_epoch=0, v_batch=0, start_patience=0):
         print("Training model... ")
-        model.train_for_epochs( batch, epochs, start_epoch, v_batch=v_batch)
+        model.train_for_epochs( batch, epochs, start_epoch, v_batch=v_batch, start_patience=start_patience)
         return model
 
 ############################## DATASET
@@ -142,6 +142,9 @@ class Setup:
         print('Found GPU at: {}'.format(device_name))
 
     ########################## GET OBJECTS
+
+    def get_model_patience():
+        return CapsNet.patience
 
     def get_total_images(self, x):
         return x.shape[0]   

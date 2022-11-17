@@ -10,9 +10,10 @@ class CapsuleNetwork(tf.keras.Model):
     m_minus = 0.1
     lambda_ = 0.5
     alpha = 0.0005
-    learning_rate = 1e-4
+    learning_rate = 3e-5
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
     save_every_epochs = 1
+    patience = 5
 
 
     def __init__(self, size, no_of_conv_kernels, no_of_primary_caps_channels, 
@@ -124,15 +125,14 @@ class CapsuleNetwork(tf.keras.Model):
         self.optimizer.apply_gradients(zip(grad, self.trainable_variables))
         return loss
 
-    def train_for_epochs(self, batch, epochs, start_epochs=0, v_batch=0):
+    def train_for_epochs(self, batch, epochs, start_epochs=0, v_batch=0, start_patience=0):
         
         checkpoint_path = self.get_checkpoint_path()
         checkpoint = tf.train.Checkpoint(model=self)
         checkpoint.save_counter.assign_add(self._epochs_to_cpkt(start_epochs))
 
         #early stopping parameters
-        patience = 5
-        wait = 0
+        wait = start_patience
         best = 0
 
         #epochs loop
@@ -177,7 +177,7 @@ class CapsuleNetwork(tf.keras.Model):
                         best = accuracy
                         wait = 0
                     #if the model is overfitting
-                    if wait >= patience:
+                    if wait >= self.patience:
 
                         pbar.set_postfix_str('early stopped!')
                         break
