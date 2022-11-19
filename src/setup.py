@@ -34,23 +34,21 @@ class Setup:
 
 ############################## MODEL
 
-    def init_model(self, id, version):
+    def init_model(self, id, version, x, y):
         self.params["id"] = id
         self.params["version"] = version
-        return CapsNet(**self.params)
+        model = CapsNet(**self.params)
+        _ = model.train(x[:1],y[:1])
+        return model
 
-    def load_ckpt(self, model, x, y, epochs=-1):
-        if(epochs==0):
-            return model
-
+    def load_ckpt(self, model, epochs=-1):
         print("Loading model... ")
-        _ = model.train(x[:32],y[:32])
         model.load(epochs)
         return model
 
-    def train_model(self, model, batch, epochs, start_epoch=0, v_batch=0, start_patience=0):
+    def train_model(self, model, batch, epochs, resume=False, v_batch=0):
         print("Training model... ")
-        model.train_for_epochs( batch, epochs, start_epoch, v_batch=v_batch, start_patience=start_patience)
+        model.train_for_epochs( batch, epochs, resume=resume, v_batch=v_batch)
         return model
 
 ############################## DATASET
