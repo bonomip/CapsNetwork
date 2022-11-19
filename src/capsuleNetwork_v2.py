@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
@@ -79,13 +80,27 @@ class CapsuleNetwork(tf.keras.Model):
         checkpoint.restore(ckpt)
 
     def load(self, epochs=-1):
-        if epochs<0:
-            return self.load_latest()
-    
-        i = self._epochs_to_cpkt(epochs)
+        if epochs==0:
+        
+            return 0
 
+        #create checkpoint obj binded to model
         checkpoint = tf.train.Checkpoint(model=self)
-        checkpoint.restore(self.get_checkpoint_path()+"/ckpt-"+str(i))
+        #ckpt base path
+        path = self.get_checkpoint_path()+"/ckpt-"
+        #default is load latest ckpt
+        if epochs<0:
+    
+            checkpoint.restore(tf.train.latest_checkpoint(path))
+    
+        else:
+
+            #convert epoch to ckpt index
+            i = self._epochs_to_cpkt(epochs)
+            #load weights into model
+            checkpoint.restore(path+str(i))
+        
+        return 1
 
     def squash(self, s):
         with tf.name_scope("SquashFunction") as scope:
@@ -125,18 +140,45 @@ class CapsuleNetwork(tf.keras.Model):
         self.optimizer.apply_gradients(zip(grad, self.trainable_variables))
         return loss
 
-    def train_for_epochs(self, batch, epochs, start_epochs=0, v_batch=0, start_patience=0):
+    def train_for_epochs(self, batch, epochs, resume=False, v_batch=0):
         
+        #path to checkpoint
         checkpoint_path = self.get_checkpoint_path()
-        checkpoint = tf.train.Checkpoint(model=self)
-        checkpoint.save_counter.assign_add(self._epochs_to_cpkt(start_epochs))
-
+        #path to file used to store values necessary to restore training
+        restore_file = checkpoint_path+"/restore.txt"
+        #epoch from which start training
+        start_epoch = 0
         #early stopping parameters
-        wait = start_patience
+        wait = 0
         best = 0
 
+        #if we are traning in rounds
+        if resume:
+
+            #if no resume file exist
+            if not os.path.exists(restore_file):
+
+                print("No resume file found! Impossible to resume training!")
+
+            else:
+                
+                #load data from file
+                with open(restore_file, "r") as f:
+
+                    a = f.read().split(" ")
+                    start_epoch = int(a[0])
+                    wait = int(a[1])
+                    best = float(a[2])
+
+                #load last weights
+                self.load(start_epoch)
+
+        #set up checkpoint object
+        checkpoint = tf.train.Checkpoint(model=self)
+        checkpoint.save_counter.assign_add(self._epochs_to_cpkt(start_epoch))
+
         #epochs loop
-        for i in range(start_epochs+1, epochs+1, 1):
+        for i in range(start_epoch+1, epochs+1, 1):
         
             with tqdm(total=len(batch)) as pbar:
 
@@ -153,6 +195,12 @@ class CapsuleNetwork(tf.keras.Model):
                     
                     pbar.set_postfix_str('saving ckpt...')  
                     checkpoint.save(checkpoint_path+"/ckpt")
+                    #save information for resume train later
+                    with open(restore_file, "w") as f:
+
+                        #current epoch, wait value, validation accuracy
+                        f.write(str(i)+" "+str(wait)+" "+str(best))
+                        f.write("learning_rate:"+str(self.learning_rate))
 
                 pbar.set_postfix_str('')  
 
