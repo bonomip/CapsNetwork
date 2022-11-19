@@ -200,7 +200,7 @@ class CapsuleNetwork(tf.keras.Model):
 
                         #current epoch, wait value, validation accuracy
                         f.write(str(i)+" "+str(wait)+" "+str(best))
-                        f.write("learning_rate:"+str(self.learning_rate))
+                        f.write(" learning_rate:"+str(self.learning_rate))
 
                 pbar.set_postfix_str('')  
 
