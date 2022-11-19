@@ -12,7 +12,8 @@ parser.add_argument("--model",
                     help="0="+str(Setup.GEN[0])+"; "+
                         "1="+str(Setup.GEN[1])+"; "+
                         "2="+str(Setup.GEN[2])+"; "+
-                        "3="+str(Setup.GEN[3]))
+                        "3="+str(Setup.GEN[3])+": "+
+                        "4="+str(Setup.GEN[4]))
 parser.add_argument("--resume",
                     default=False,
                     action='store_true',
@@ -26,7 +27,7 @@ parser.add_argument("--dataset-version",
 parser.add_argument("-d",
                     default=False,
                     help="Enable debug",
-                    action='store_true')   
+                    action='store_true')
 parser.add_argument("--no-gpu",
                     default=False,
                     action='store_true') 

@@ -12,7 +12,7 @@ import cWSaffNIST
 
 class Setup:
 
-    GEN = ["MNIST", "Custom_affNIST", "affNIST", "Custom_affNIST_without_shearing"] #dataset keys
+    GEN = ["original_MNIST", "affNIST", "my_MNIST", "Custom_affNIST", "Custom_affNIST_without_shearing"] #dataset keys
     BATCH_SIZE = 64
     DEBUG_NO_MINI_BATCH = 10
 
@@ -57,11 +57,19 @@ class Setup:
         X_ = 0
         y_ = 0
         
-        if string == self.GEN[0]: # MINST #TODO APPLY PADDING to make it 40x40
+        if string == self.GEN[0]: # toronto padded MNIST
             
-            X_, y_ = MNIST.load(train)
-                
-        elif string == self.GEN[1]: # CUSTOM AFFNIST
+            X_, y_ =affNIST.load_MNIST(train)
+                    
+        elif string == self.GEN[1]: # toronto affNIST
+            
+            (X_, y_) = affNIST.load(train)            
+
+        if string == self.GEN[2]: # my padded MNIST
+            
+            X_, y_ = MNIST.load(train, original=True)
+
+        elif string == self.GEN[3]: # CUSTOM AFFNIST
             
             if(create):
                 
@@ -70,12 +78,8 @@ class Setup:
             else:
                 
                 (X_, y_) = caffNIST.load(version, train)
-                    
-        elif string == self.GEN[2]: # AFFNIST
-            
-            (X_, y_) = affNIST.load(train)            
 
-        elif string == self.GEN[3]: # CUTOM AFFNIST NO SHEARING
+        elif string == self.GEN[4]: # CUTOM AFFNIST NO SHEARING
 
             if(create):
                 
@@ -84,6 +88,8 @@ class Setup:
             else:
                 
                 (X_, y_) = cWSaffNIST.load(version, train)
+
+        ### add others datasets
 
         return X_, y_
 

@@ -66,3 +66,10 @@ def load(train):
         img_set, ans_set = _unpack(loadmat(path))
 
     return img_set,ans_set
+
+def load_MNIST(train):
+    s = "training" if train else "test"
+    print("Load toronto MNIST "+s+" dataset... ")
+    path = './data/affNIST/originals/'+s+'.mat'
+    img_set, ans_set = _unpack(loadmat(path))
+    return img_set,ans_set
