@@ -107,7 +107,7 @@ X_train, y_train, dataset = [data[i] for i in (0, 1, 2)]
 #remove train data from array
 data = data[3:]
 #init model
-model = setup.init_model(model_id, model_version)
+model = setup.init_model(model_id, model_version, X_train, y_train)
 
 # evaluate accuracy for each epoch on each dataset
 for i in range(args.f, args.t+1):
@@ -119,7 +119,7 @@ for i in range(args.f, args.t+1):
     #description string for progression bar
     s = "- "+model_id+" train"
     #load ckpt for current epoch
-    setup.load_ckpt(model, X_train, y_train, i)
+    setup.load_ckpt(model, i)
     #evaluate accuray on train set
     accuracies.append(setup.get_accuracy(model, dataset, setup.get_total_images(X_train), s))
     for j in range(len(Setup.GEN)):

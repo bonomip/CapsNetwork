@@ -13,16 +13,10 @@ parser.add_argument("--model",
                         "1="+str(Setup.GEN[1])+"; "+
                         "2="+str(Setup.GEN[2])+"; "+
                         "3="+str(Setup.GEN[3]))
-parser.add_argument("-f",
-                    choices=range(0, 49),
-                    type=int,
-                    required=True,
-                    metavar="First epoch to be considered")
-parser.add_argument("--patience",
-                    choices=range(0, Setup.get_model_patience()),
-                    type=int,
-                    required=True,
-                    metavar="First epoch to be considered")               
+parser.add_argument("--resume",
+                    default=False,
+                    action='store_true',
+                    help="Resume training")               
 parser.add_argument("--model-version",
                     default="_v1",
                     type=str) 
@@ -31,12 +25,14 @@ parser.add_argument("--dataset-version",
                     type=str)
 parser.add_argument("-d",
                     default=False,
+                    help="Enable debug",
                     action='store_true')   
 parser.add_argument("--no-gpu",
                     default=False,
                     action='store_true') 
 parser.add_argument("--early-stopping",
                     default=False,
+                    help="Enable early stopping",
                     action='store_true') 
 args=parser.parse_args()
 
@@ -45,19 +41,17 @@ model_id = Setup.GEN[args.model]
 #model and dataset version
 model_version = args.model_version
 dataset_version = args.dataset_version
-#checkpoint to load and start train from
-last_epoch = args.f
+#validation set; used only for ealy stopping
+validation=0
 
 #load model ckpt and dataset
 setup = Setup(debug=args.d, no_gpu_check=args.no_gpu)
 X_train, y_train, dataset = setup.load_data(model_id, train=True, version=dataset_version, create=False)
-model = setup.init_model(model_id, model_version)
-model = setup.load_ckpt(model, X_train, y_train, epochs=last_epoch)
-
+model = setup.init_model(model_id, model_version, X_train, y_train)
 #load validation set for early stopping
-testing = 0
 if args.early_stopping:
 
-    X_test, y_test, testing = setup.load_data(model_id, train=False, version=dataset_version, create=False)
+    x, y, validation = setup.load_data(model_id, train=False, version=dataset_version, create=False)
 
-model = setup.train_model(model, dataset, epochs=50, start_epoch=last_epoch, v_batch=testing, start_patience=args.patience)
+#launch training
+model = setup.train_model(model, dataset, epochs=50, resume=args.resume, v_batch=validation)
