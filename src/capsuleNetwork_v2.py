@@ -14,7 +14,7 @@ class CapsuleNetwork(tf.keras.Model):
     learning_rate = 3e-5
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
     save_every_epochs = 1
-    patience = 5
+    patience = 10
 
 
     def __init__(self, size, no_of_conv_kernels, no_of_primary_caps_channels, 

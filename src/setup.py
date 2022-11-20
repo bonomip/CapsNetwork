@@ -67,7 +67,7 @@ class Setup:
 
         if string == self.GEN[2]: # my padded MNIST
             
-            X_, y_ = MNIST.load(train, original=True)
+            X_, y_ = MNIST.load(train)
 
         elif string == self.GEN[3]: # CUSTOM AFFNIST
             
