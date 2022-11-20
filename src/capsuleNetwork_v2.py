@@ -102,6 +102,13 @@ class CapsuleNetwork(tf.keras.Model):
         
         return 1
 
+    def save_resume(self, path, epoch, wait=0, best=0):
+        #save information for resume train later
+        with open(path, "w") as f:
+            #current epoch, wait value, validation accuracy
+            f.write(str(epoch)+" "+str(wait)+" "+str(best))
+            f.write(" learning_rate:"+str(self.learning_rate))
+
     def squash(self, s):
         with tf.name_scope("SquashFunction") as scope:
             s_norm = tf.norm(s, axis=-1, keepdims=True)
@@ -195,12 +202,6 @@ class CapsuleNetwork(tf.keras.Model):
                     
                     pbar.set_postfix_str('saving ckpt...')  
                     checkpoint.save(checkpoint_path+"/ckpt")
-                    #save information for resume train later
-                    with open(restore_file, "w") as f:
-
-                        #current epoch, wait value, validation accuracy
-                        f.write(str(i)+" "+str(wait)+" "+str(best))
-                        f.write(" learning_rate:"+str(self.learning_rate))
 
                 pbar.set_postfix_str('')  
 
@@ -221,7 +222,7 @@ class CapsuleNetwork(tf.keras.Model):
                     wait += 1
                     #if the model is improving
                     if accuracy > best:
-
+                        
                         best = accuracy
                         wait = 0
                     #if the model is overfitting
@@ -229,6 +230,8 @@ class CapsuleNetwork(tf.keras.Model):
 
                         pbar.set_postfix_str('early stopped!')
                         break
+                    
+                self.save_resume(restore_file, i, wait, best)
                 
                
             
