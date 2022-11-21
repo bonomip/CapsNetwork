@@ -102,11 +102,11 @@ class CapsuleNetwork(tf.keras.Model):
         
         return 1
 
-    def save_resume(self, path, epoch, wait=0, best=0):
+    def save_resume(self, path, epoch, wait=0, best=0, best_epoch=0):
         #save information for resume train later
         with open(path, "w") as f:
             #current epoch, wait value, validation accuracy
-            f.write(str(epoch)+" "+str(wait)+" "+str(best))
+            f.write(str(epoch)+" "+str(wait)+" "+str(best)+" "+str(best_epoch))
             f.write(" learning_rate:"+str(self.learning_rate))
 
     def squash(self, s):
@@ -158,6 +158,7 @@ class CapsuleNetwork(tf.keras.Model):
         #early stopping parameters
         wait = 0
         best = 0
+        best_epoch = 0
 
         #if we are traning in rounds
         if resume:
@@ -176,6 +177,7 @@ class CapsuleNetwork(tf.keras.Model):
                     start_epoch = int(a[0])
                     wait = int(a[1])
                     best = float(a[2])
+                    best_epoch = int(a[3])
 
                 #load last weights
                 self.load(start_epoch)
@@ -222,7 +224,7 @@ class CapsuleNetwork(tf.keras.Model):
                     wait += 1
                     #if the model is improving
                     if accuracy > best:
-                        
+                        best_epoch = i
                         best = accuracy
                         wait = 0
                     #if the model is overfitting
@@ -231,7 +233,7 @@ class CapsuleNetwork(tf.keras.Model):
                         pbar.set_postfix_str('early stopped!')
                         break
                     
-                self.save_resume(restore_file, i, wait, best)
+                self.save_resume(restore_file, i, wait, best, best_epoch)
                 
                
             
