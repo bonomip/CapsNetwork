@@ -1,10 +1,9 @@
+import os
 import re
 import sys
 import argparse
 sys.path.append("./src")
 from setup import Setup # set up model and dataset
-
-
 
 #number of checkpoints physically inside log/model directory
 no_ckpt = 50
@@ -80,6 +79,9 @@ parser.add_argument("--no-gpu",
                     default=False,
                     action='store_true') 
 args=parser.parse_args()
+
+if args.no_gpu:
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 #model to evaluate
 model_id = Setup.GEN[args.model]
