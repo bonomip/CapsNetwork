@@ -24,27 +24,6 @@ def make_header(name):
     p2 = length-p1-len(name)-2
     return ("-"*p1)+" "+name+" "+("-"*p2)
 
-#parse txt file to array -- RETURNS and array where each entry is a dictionary
-# --------------------------------- referenced by the name of the dataset
-def parse(path):
-    with open(path) as f:
-        value_list = re.findall('\d*?\.\d+', f.read())
-    name_list = Setup.GEN
-    name_list.insert("Train")
-    step = len(name_list)
-    epochs = [value_list[i*step:(i+1)*step] for i in range(int(len(list)/step))]
-    array = []
-    for i in range(len(epochs)):
-    
-        entry = {}
-        for j in range(step):
-
-            entry[name_list[j]] = epochs[i][j]
-
-        array.append(entry)
-
-    return array
-
 #setup argument parser
 parser=argparse.ArgumentParser()
 parser.add_argument("--model",
