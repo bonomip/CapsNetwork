@@ -17,7 +17,7 @@ class CapsuleNetwork(tf.keras.Model):
     patience = 10
 
 
-    def __init__(self, size, no_of_conv3_kernels, no_of_primary_caps_channels, 
+    def __init__(self, size, no_of_conv_kernels, no_of_primary_caps_channels, 
                     no_of_secondary_capsules, primary_capsule_vector, secondary_capsule_vector, r, id, version):
         
         super(CapsuleNetwork, self).__init__()
@@ -25,9 +25,9 @@ class CapsuleNetwork(tf.keras.Model):
         self.model_id = id
         self.model_version = version
         
-        self.no_of_conv3_kernels = no_of_conv3_kernels
-        self.no_of_conv2_kernels = no_of_conv3_kernels / 2
-        self.no_of_conv1_kernels = no_of_conv3_kernels / 4
+        self.no_of_conv3_kernels = no_of_conv_kernels
+        self.no_of_conv2_kernels = no_of_conv_kernels / 2
+        self.no_of_conv1_kernels = no_of_conv_kernels / 4
 
         self.no_of_primary_caps_channels = no_of_primary_caps_channels
         self.no_of_secondary_capsules = no_of_secondary_capsules
