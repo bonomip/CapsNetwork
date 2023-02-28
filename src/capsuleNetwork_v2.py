@@ -18,9 +18,12 @@ class CapsuleNetwork(tf.keras.Model):
 
 
     def __init__(self, size, no_of_conv_kernels, no_of_primary_caps_channels, 
-                    no_of_secondary_capsules, primary_capsule_vector, secondary_capsule_vector, r, id, version):
+                    no_of_secondary_capsules, primary_capsule_vector, secondary_capsule_vector, r, id, version, learning_rate=3e-5):
         
         super(CapsuleNetwork, self).__init__()
+
+        self.learning_rate = learning_rate
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
         self.model_id = id
         self.model_version = version

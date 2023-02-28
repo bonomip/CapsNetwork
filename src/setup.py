@@ -35,9 +35,12 @@ class Setup:
 
 ############################## MODEL
 
-    def init_model(self, id, version, x, y, main_model_version="v2"):
+    def init_model(self, id, version, x, y, learning_rate, main_model_version):
         self.params["id"] = id
         self.params["version"] = version
+
+        if(learning_rate > 0):
+            self.params["learning_rate"] = learning_rate;
       
         if(main_model_version == "v3"):
             model = CapsNet2(**self.params)

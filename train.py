@@ -38,7 +38,14 @@ parser.add_argument("--early-stopping",
                     default=False,
                     help="Enable early stopping",
                     action='store_true') 
+parser.add_argument("--learning-rate",
+                    help="Set learning rate",
+                    default=0.0,
+                    type=float) 
 args=parser.parse_args()
+
+#learning rate
+learning_rate = args.learning_rate
 
 #model to evaluate
 model_id = Setup.GEN[args.model]
@@ -52,7 +59,8 @@ validation=0
 #load model ckpt and dataset
 setup = Setup(debug=args.d, no_gpu_check=args.no_gpu)
 X_train, y_train, dataset = setup.load_data(model_id, train=True, version=dataset_version, create=False)
-model = setup.init_model(model_id, model_version, X_train, y_train, main_model_version)
+model = setup.init_model(model_id, model_version, X_train, y_train, learning_rate, main_model_version)
+
 #load validation set for early stopping
 if args.early_stopping:
 
