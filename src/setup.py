@@ -5,6 +5,7 @@ from tqdm import tqdm
 ## project class import
 
 from capsuleNetwork_v2 import CapsuleNetwork as CapsNet
+from capsuleNetwork_v3 import CapsuleNetwork as CapsNet2
 import affNIST
 import caffNIST
 import MNIST
@@ -34,10 +35,15 @@ class Setup:
 
 ############################## MODEL
 
-    def init_model(self, id, version, x, y):
+    def init_model(self, id, version, x, y, main_model_version="v2"):
         self.params["id"] = id
         self.params["version"] = version
-        model = CapsNet(**self.params)
+      
+        if(main_model_version == "v3"):
+            model = CapsNet2(**self.params)
+        else:
+            model = CapsNet(**self.params)
+
         _ = model.train(x[:1],y[:1])
         return model
 
@@ -145,7 +151,7 @@ class Setup:
             raise SystemError('GPU device not found')
         print('Found GPU at: {}'.format(device_name))
 
-    ########################## GET OBJECTS
+############################ GET OBJECTS
 
     def get_model_patience():
         return CapsNet.patience

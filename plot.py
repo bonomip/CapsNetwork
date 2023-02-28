@@ -8,6 +8,16 @@ from setup import Setup # set up model and dataset
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
+'''
+
+the files must be in "./MAIN_MODEL_VERSION" folder.
+
+for example if using v2 "./v2"
+for example if using v3 "./v3"
+
+
+'''
+
 #parse txt file to array -- RETURNS and array of epochs, where each entry is a dictionary
 # --------------------------------- referenced by the name of the dataset
 def parse(path):
@@ -34,6 +44,9 @@ parser=argparse.ArgumentParser()
 parser.add_argument("--model-version",
                     default="_v1",
                     type=str)
+parser.add_argument("--main_model-version",
+                    default="v2",
+                    type=str)
 parser.add_argument("--exclude-affnist",
                     default=False,
                     action='store_true')
@@ -47,6 +60,7 @@ models = [Setup.GEN[0], Setup.GEN[1], Setup.GEN[3], Setup.GEN[4]]
 labels= ["MNIST", "affNIST", "my MNIST", "my affNIST", "my affNIST w/o shear"]
 #model version
 model_version = args.model_version
+main_model_version = args.main_model_version
 #colors
 colors = list(mcolors.BASE_COLORS.keys())
 
@@ -57,7 +71,7 @@ for id in range(0, 4):
     if id == 3: #wait for no sharing model to be complete
         continue
 
-    file_path = "./"+models[id]+model_version+".txt"
+    file_path = "./result/"+main_model_version+"/"+models[id]+model_version+".txt"
     result = parse(file_path)
     no_epochs = len(result)
     # x axis values

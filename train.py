@@ -21,6 +21,9 @@ parser.add_argument("--resume",
 parser.add_argument("--model-version",
                     default="_v1",
                     type=str) 
+parser.add_argument("--main-model-version",
+                    default="v2",
+                    type=str) 
 parser.add_argument("--dataset-version",
                     default="_v1",
                     type=str)
@@ -40,15 +43,16 @@ args=parser.parse_args()
 #model to evaluate
 model_id = Setup.GEN[args.model]
 #model and dataset version
-model_version = args.model_version
-dataset_version = args.dataset_version
+main_model_version = args.main_model_version # the source code
+model_version = args.model_version # the type of training the model has
+dataset_version = args.dataset_version # the dataset version
 #validation set; used only for ealy stopping
 validation=0
 
 #load model ckpt and dataset
 setup = Setup(debug=args.d, no_gpu_check=args.no_gpu)
 X_train, y_train, dataset = setup.load_data(model_id, train=True, version=dataset_version, create=False)
-model = setup.init_model(model_id, model_version, X_train, y_train)
+model = setup.init_model(model_id, model_version, X_train, y_train, main_model_version)
 #load validation set for early stopping
 if args.early_stopping:
 

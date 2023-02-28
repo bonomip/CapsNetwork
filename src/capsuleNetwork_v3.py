@@ -17,7 +17,7 @@ class CapsuleNetwork(tf.keras.Model):
     patience = 10
 
 
-    def __init__(self, size, no_of_conv_kernels, no_of_primary_caps_channels, 
+    def __init__(self, size, no_of_conv3_kernels, no_of_primary_caps_channels, 
                     no_of_secondary_capsules, primary_capsule_vector, secondary_capsule_vector, r, id, version):
         
         super(CapsuleNetwork, self).__init__()
@@ -25,7 +25,10 @@ class CapsuleNetwork(tf.keras.Model):
         self.model_id = id
         self.model_version = version
         
-        self.no_of_conv_kernels = no_of_conv_kernels
+        self.no_of_conv3_kernels = no_of_conv3_kernels
+        self.no_of_conv2_kernels = no_of_conv3_kernels / 2
+        self.no_of_conv1_kernels = no_of_conv3_kernels / 4
+
         self.no_of_primary_caps_channels = no_of_primary_caps_channels
         self.no_of_secondary_capsules = no_of_secondary_capsules
         self.primary_capsule_vector = primary_capsule_vector
@@ -34,22 +37,22 @@ class CapsuleNetwork(tf.keras.Model):
         self.r = r
 
         #dense layers size
-        self.d1 = 512
-        self.d2 = 1024
-        self.d3 = size*size
+        self.d1 = 1024
+        self.d2 = 2048
+        self.d3 = size*size #40*40
 
-        self.no_primary_capsule = 0
+        self.no_primary_capsule = 1152
 
-        if size == 28:
-            self.no_primary_capsule = 1152
-        if size == 40:
-            self.no_primary_capsule = 4608 
-
-        
         with tf.name_scope("Variables") as scope:
 
-            self.convolution = tf.keras.layers.Conv2D(self.no_of_conv_kernels, [9,9], strides=[1,1], 
-                                                        name='ConvolutionLayer', activation='relu')
+            self.conv1 = tf.keras.layers.Conv2D(self.no_of_conv1_kernels, [5,5], strides=[1,1], 
+                                                        name='ConvolutionLayer1', activation='relu')
+
+            self.conv2 = tf.keras.layers.Conv2D(self.no_of_conv2_kernels, [9,9], strides=[1,1], 
+                                                        name='ConvolutionLayer2', activation='relu')
+
+            self.conv3 = tf.keras.layers.Conv2D(self.no_of_conv3_kernels, [9,9], strides=[1,1], 
+                                                        name='ConvolutionLayer3', activation='relu')
             
             self.primary_capsule = tf.keras.layers.Conv2D(self.no_of_primary_caps_channels * self.primary_capsule_vector, 
                                                             [9,9], strides=[2,2], name="PrimaryCapsule")
@@ -71,7 +74,7 @@ class CapsuleNetwork(tf.keras.Model):
         return int(epochs/self.save_every_epochs)
 
     def get_checkpoint_path(self):
-        return './logs/v2/'+self.model_id+'/model'+self.model_version
+        return './logs/v3/'+self.model_id+'/model'+self.model_version
 
     def load_latest(self):
         checkpoint = tf.train.Checkpoint(model=self)
@@ -244,33 +247,27 @@ class CapsuleNetwork(tf.keras.Model):
     def call(self, inputs):
         input_x, y = inputs
         
-        x = self.convolution(input_x) # 32x32x256
-        x = self.primary_capsule(x) # 12x12x256(=8x32)
+        x = self.conv1(input_x) #36x36x64
+        x = self.conv2(x) # 28x28x128
+        x = self.conv3(x) # 20x20x256
+        x = self.primary_capsule(x) # 6x6x256
 
         with tf.name_scope("CapsuleFormation") as scope:
-                                            # u.shape: (None, 4608, 8)
+                                            
             u = tf.reshape(x, (-1,  self.no_of_primary_caps_channels * x.shape[1] * x.shape[2], self.primary_capsule_vector))
-            u = tf.expand_dims(u, axis=-2)  # u.shape: (None, 4608, 1, 8)
-            u = tf.expand_dims(u, axis=-1)  # u.shape: (None, 4608, 1, 8, 1)
-                                            # w.shape: ( 1, 4608, 10, 16, 8 )
-                                            # u.shape: ( None, 4608,  1,  8, 1 )
-            u_hat = tf.matmul(self.w, u)    # u_hat.shape: ( None, 4608, 10, 16, 1 )
-            u_hat = tf.squeeze(u_hat, [4])  # u_hat.shape: (None, 4608, 10, 16 )
+            u = tf.expand_dims(u, axis=-2)  
+            u = tf.expand_dims(u, axis=-1)     
+            u_hat = tf.matmul(self.w, u)   
+            u_hat = tf.squeeze(u_hat, [4])
         
         with tf.name_scope("DynamicRouting") as scope:
-                                                       # 10                  
-            b = tf.zeros((input_x.shape[0], self.no_primary_capsule, self.no_of_secondary_capsules, 1)) # b.shape: (None, 4608, 10, 1)
-            for i in range(self.r): # self.r = 3
-                c = tf.nn.softmax(b, axis=-2) # c.shape: (None, 4608, 10, 1)
-                s = tf.reduce_sum(tf.multiply(c, u_hat), axis=1, keepdims=True) # s.shape: (None, 1, 10, 16)
-                v = self.squash(s) # v.shape: (None, 1, 10, 16)
-                agreement = tf.squeeze(tf.matmul(tf.expand_dims(u_hat, axis=-1), tf.expand_dims(v, axis=-1), transpose_a=True), [4]) # agreement.shape: (None, 1152, 10, 1)
-                # Before matmul following intermediate shapes are present, they are not assigned to a variable but just for understanding the code.
-                # u_hat.shape (Intermediate shape) : (None, 4608, 10, 16, 1)
-                # v.shape (Intermediate shape): (None, 1, 10, 16, 1)
-                # Since the first parameter of matmul is to be transposed its shape becomes:(None, 4608, 10, 1, 16)
-                # Now matmul is performed in the last two dimensions, and others are broadcasted
-                # Before squeezing we have an intermediate shape of (None, 4608, 10, 1, 1)
+                                                                       
+            b = tf.zeros((input_x.shape[0], self.no_primary_capsule, self.no_of_secondary_capsules, 1)) 
+            for i in range(self.r):
+                c = tf.nn.softmax(b, axis=-2) 
+                s = tf.reduce_sum(tf.multiply(c, u_hat), axis=1, keepdims=True)
+                v = self.squash(s)
+                agreement = tf.squeeze(tf.matmul(tf.expand_dims(u_hat, axis=-1), tf.expand_dims(v, axis=-1), transpose_a=True), [4])
                 b += agreement
                 
         with tf.name_scope("Masking") as scope:
@@ -289,7 +286,9 @@ class CapsuleNetwork(tf.keras.Model):
     
     @tf.function
     def predict_capsule_output(self, inputs):
-        x = self.convolution(inputs)
+        x = self.conv1(inputs) #36x36x64
+        x = self.conv2(x) # 28x28x128
+        x = self.conv3(x) # 20x20x256
         x = self.primary_capsule(x)
         
         with tf.name_scope("CapsuleFormation") as scope:

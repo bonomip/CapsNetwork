@@ -51,6 +51,9 @@ parser.add_argument("-d",
 parser.add_argument("--model-version",
                     default="_v1",
                     type=str) 
+parser.add_argument("--main-model-version",
+                    default="v2",
+                    type=str) 
 parser.add_argument("--dataset-version",
                     default="_v1",
                     type=str)
@@ -67,11 +70,12 @@ model_id = Setup.GEN[args.model]
 #check if range is positive
 if (args.t - args.f) < 0:
   raise Exception("Sorry, no numbers below zero")  
-#model and dataset version
+# model and dataset version
+main_model_version = args.main_model_version
 model_version = args.model_version
 dataset_version = args.dataset_version
-#path where result would be saved
-file_path = "./"+model_id+model_version+".txt"
+# path where result would be saved
+file_path = "./results/"+main_model_version+"/"+model_id+model_version+".txt"
 
 #init file if first time -- THIS WOULD RESET THE FILE
 if args.f == 1:
