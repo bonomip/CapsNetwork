@@ -4,12 +4,14 @@ from tqdm import tqdm
 
 ## project class import
 
-from capsuleNetwork_v2 import CapsuleNetwork as CapsNet
-import affNIST
-import caffNIST
-import MNIST
-import cWSaffNIST
-import rMNIST
+from capsuleNetwork import CapsuleNetwork as CapsNet
+
+import dataset.affNIST as affNIST
+import dataset.caffNIST as caffNIST
+import dataset.MNIST as MNIST
+import dataset.cWSaffNIST as cWSaffNIST
+import dataset.rMNIST as rMNIST
+import dataset.sMNIST as sMNIST
 
 class Setup:
 
@@ -19,14 +21,15 @@ class Setup:
         "my_MNIST", # deprecated
         "Custom_affNIST", # deprecated
         "Custom_affNIST_without_shearing", # deprecated
-        "rMNIST"
+        "rMNIST",
+        "sMNIST"
     ] #dataset keys
     BATCH_SIZE = 64
     DEBUG_NO_MINI_BATCH = 10
 
     #architecture params
     params = {
-        "size": 40,
+        "size": 0,
         "no_of_conv_kernels": 256,
         "no_of_primary_caps_channels": 32,
         "no_of_secondary_capsules": 10,
@@ -45,7 +48,8 @@ class Setup:
     def init_model(self, id, version, x, y, learning_rate):
         self.params["id"] = id
         self.params["version"] = version
-
+        self.params["size"] = 40 if (self.GEN.index(id) <= 5) else 28
+        
         if(learning_rate > 0):
             self.params["learning_rate"] = learning_rate;
       
@@ -110,6 +114,15 @@ class Setup:
             else:
                 
                 (X_, y_) = rMNIST.load(train)
+        
+        elif string == self.GEN[6]: # shifted MNIST 28x28
+            if(create):
+                
+                (X_, y_) = sMNIST.create_shifted_mnist()
+                
+            else:
+                
+                (X_, y_) = sMNIST.load(train)
 
         ### add others datasets
 

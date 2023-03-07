@@ -35,13 +35,21 @@ class CapsuleNetwork(tf.keras.Model):
         self.secondary_capsule_vector = secondary_capsule_vector
 
         self.r = r
+        self.size = size
 
         #dense layers size
         self.d1 = 512
         self.d2 = 1024
-        self.d3 = 784
-        self.no_primary_capsule = 1152
+        self.d3 = size*size
 
+        self.no_primary_capsule = 0
+
+        if size == 28:
+            self.no_primary_capsule = 1152
+        if size == 40:
+            self.no_primary_capsule = 4608 
+
+        
         with tf.name_scope("Variables") as scope:
 
             self.convolution = tf.keras.layers.Conv2D(self.no_of_conv_kernels, [9,9], strides=[1,1], 
@@ -128,13 +136,16 @@ class CapsuleNetwork(tf.keras.Model):
     def loss_function(self, v, reconstructed_image, y, y_image):
         ### margin loss is a reduce_mean .... in the paper this is not specified.
         ### in the paper is only the summ of all the digit loss.
+        ### one way to fix it is:
+        #### 1) self.apha * self.size * self.size
+        #### 2) magin_loss * 10
         prediction = self.safe_norm(v)
         prediction = tf.reshape(prediction, [-1, self.no_of_secondary_capsules])
         left_margin = tf.square(tf.maximum(0.0, self.m_plus - prediction))
         right_margin = tf.square(tf.maximum(0.0, prediction - self.m_minus))
         l = tf.add(y * left_margin, self.lambda_ * (1.0 - y) * right_margin)
         margin_loss = tf.reduce_mean(tf.reduce_sum(l, axis=-1))
-        y_image_flat = tf.reshape(y_image, [-1, 1600])
+        y_image_flat = tf.reshape(y_image, [-1, self.size*self.size])
         reconstruction_loss = tf.reduce_mean(tf.square(y_image_flat - reconstructed_image))
         loss = tf.add(margin_loss, self.alpha * reconstruction_loss)
         

@@ -57,6 +57,15 @@ def _load_MNIST(train):
     img_set, ans_set, trans = _unpack(loadmat(path))
     return img_set, ans_set
 
+def convert_to_torch(img):
+    rx = torch.from_numpy(img)
+    rx = torch.unsqueeze(rx, 0)
+    return rx
+
+def convert_to_tensor(img):
+    rx = tf.convert_to_tensor(img, dtype=tf.dtypes.float32)
+    rx = np.reshape(rx, [1, 40, 40])
+    return rx
 
 def check_bounds(x, rx):
     a = np.sum(x)

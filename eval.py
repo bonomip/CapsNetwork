@@ -6,7 +6,7 @@ sys.path.append("./src")
 from setup import Setup # set up model and dataset
 
 #number of checkpoints physically inside log/model directory
-no_ckpt = 50
+no_ckpt = 100
 
 def get_all_datasets(setup, model_id, dataset_version):
     data = []
@@ -28,13 +28,15 @@ def make_header(name):
 parser=argparse.ArgumentParser()
 parser.add_argument("--model",
                     metavar="ID",
-                    choices=range(0,4), 
+                    choices=range(0,len(Setup.GEN)), 
                     type=int,
                     required=True, 
                     help="0="+str(Setup.GEN[0])+"; "+
                         "1="+str(Setup.GEN[1])+"; "+
                         "2="+str(Setup.GEN[2])+"; "+
-                        "3="+str(Setup.GEN[3]))
+                        "3="+str(Setup.GEN[3])+"; "+
+                        "4="+str(Setup.GEN[4])+"; "+
+                        "5="+str(Setup.GEN[5]))
 parser.add_argument("-f",
                     choices=range(1,no_ckpt),
                     type=int,
@@ -49,14 +51,8 @@ parser.add_argument("-d",
                     default=False,
                     action='store_true')   
 parser.add_argument("--model-version",
-                    default="_v1",
+                    default="_3e-5",
                     type=str) 
-parser.add_argument("--main-model-version",
-                    default="v2",
-                    type=str) 
-parser.add_argument("--dataset-version",
-                    default="_v1",
-                    type=str)
 parser.add_argument("--no-gpu",
                     default=False,
                     action='store_true') 
@@ -71,11 +67,10 @@ model_id = Setup.GEN[args.model]
 if (args.t - args.f) < 0:
   raise Exception("Sorry, no numbers below zero")  
 # model and dataset version
-main_model_version = args.main_model_version
 model_version = args.model_version
-dataset_version = args.dataset_version
+dataset_version = "_v1"
 # path where result would be saved
-file_path = "./results/"+main_model_version+"/"+model_id+model_version+".txt"
+file_path = "./results/"+model_id+model_version+".txt"
 
 #init file if first time -- THIS WOULD RESET THE FILE
 if args.f == 1:
