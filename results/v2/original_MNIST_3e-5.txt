@@ -1,0 +1,261 @@
+
+-------------- original_MNIST --------------
+---------------- 1-th EPOCH ----------------
+~ Train                            :  0.9592
+~ original MNIST                   :  0.9603
+~ affNIST                          :  0.1556
+~ my MNIST                         :  0.9603
+~ Custom affNIST                   :  0.6428
+~ Custom affNIST without shearing  :  0.6582
+---------------- 2-th EPOCH ----------------
+~ Train                            :  0.9744
+~ original MNIST                   :  0.9761
+~ affNIST                          :  0.1772
+~ my MNIST                         :  0.9761
+~ Custom affNIST                   :  0.7108
+~ Custom affNIST without shearing  :  0.7187
+---------------- 3-th EPOCH ----------------
+~ Train                            :  0.9813
+~ original MNIST                   :  0.9812
+~ affNIST                          :  0.1738
+~ my MNIST                         :  0.9812
+~ Custom affNIST                   :  0.7416
+~ Custom affNIST without shearing  :  0.7474
+---------------- 4-th EPOCH ----------------
+~ Train                            :  0.9856
+~ original MNIST                   :  0.9848
+~ affNIST                          :  0.1781
+~ my MNIST                         :  0.9848
+~ Custom affNIST                   :  0.7392
+~ Custom affNIST without shearing  :  0.7521
+---------------- 5-th EPOCH ----------------
+~ Train                            :  0.9893
+~ original MNIST                   :  0.9840
+~ affNIST                          :  0.1814
+~ my MNIST                         :  0.9840
+~ Custom affNIST                   :  0.7737
+~ Custom affNIST without shearing  :  0.7827
+---------------- 6-th EPOCH ----------------
+~ Train                            :  0.9917
+~ original MNIST                   :  0.9872
+~ affNIST                          :  0.1904
+~ my MNIST                         :  0.9872
+~ Custom affNIST                   :  0.7764
+~ Custom affNIST without shearing  :  0.7861
+---------------- 7-th EPOCH ----------------
+~ Train                            :  0.9933
+~ original MNIST                   :  0.9877
+~ affNIST                          :  0.1866
+~ my MNIST                         :  0.9877
+~ Custom affNIST                   :  0.7849
+~ Custom affNIST without shearing  :  0.7970
+---------------- 8-th EPOCH ----------------
+~ Train                            :  0.9954
+~ original MNIST                   :  0.9901
+~ affNIST                          :  0.1913
+~ my MNIST                         :  0.9901
+~ Custom affNIST                   :  0.8009
+~ Custom affNIST without shearing  :  0.8071
+---------------- 9-th EPOCH ----------------
+~ Train                            :  0.9959
+~ original MNIST                   :  0.9895
+~ affNIST                          :  0.2026
+~ my MNIST                         :  0.9895
+~ Custom affNIST                   :  0.8043
+~ Custom affNIST without shearing  :  0.8172
+--------------- 10-th EPOCH ----------------
+~ Train                            :  0.9964
+~ original MNIST                   :  0.9895
+~ affNIST                          :  0.1976
+~ my MNIST                         :  0.9895
+~ Custom affNIST                   :  0.7869
+~ Custom affNIST without shearing  :  0.8028
+--------------- 11-th EPOCH ----------------
+~ Train                            :  0.9974
+~ original MNIST                   :  0.9903
+~ affNIST                          :  0.2001
+~ my MNIST                         :  0.9903
+~ Custom affNIST                   :  0.7924
+~ Custom affNIST without shearing  :  0.8090
+--------------- 12-th EPOCH ----------------
+~ Train                            :  0.9980
+~ original MNIST                   :  0.9903
+~ affNIST                          :  0.2044
+~ my MNIST                         :  0.9903
+~ Custom affNIST                   :  0.8038
+~ Custom affNIST without shearing  :  0.8179
+--------------- 13-th EPOCH ----------------
+~ Train                            :  0.9977
+~ original MNIST                   :  0.9896
+~ affNIST                          :  0.2305
+~ my MNIST                         :  0.9896
+~ Custom affNIST                   :  0.7902
+~ Custom affNIST without shearing  :  0.8008
+--------------- 14-th EPOCH ----------------
+~ Train                            :  0.9986
+~ original MNIST                   :  0.9900
+~ affNIST                          :  0.2134
+~ my MNIST                         :  0.9900
+~ Custom affNIST                   :  0.8062
+~ Custom affNIST without shearing  :  0.8165
+--------------- 15-th EPOCH ----------------
+~ Train                            :  0.9987
+~ original MNIST                   :  0.9909
+~ affNIST                          :  0.2132
+~ my MNIST                         :  0.9909
+~ Custom affNIST                   :  0.8091
+~ Custom affNIST without shearing  :  0.8194
+--------------- 16-th EPOCH ----------------
+~ Train                            :  0.9988
+~ original MNIST                   :  0.9904
+~ affNIST                          :  0.2125
+~ my MNIST                         :  0.9904
+~ Custom affNIST                   :  0.8098
+~ Custom affNIST without shearing  :  0.8219
+--------------- 17-th EPOCH ----------------
+~ Train                            :  0.9991
+~ original MNIST                   :  0.9887
+~ affNIST                          :  0.2166
+~ my MNIST                         :  0.9887
+~ Custom affNIST                   :  0.8053
+~ Custom affNIST without shearing  :  0.8146
+--------------- 18-th EPOCH ----------------
+~ Train                            :  0.9994
+~ original MNIST                   :  0.9900
+~ affNIST                          :  0.2236
+~ my MNIST                         :  0.9900
+~ Custom affNIST                   :  0.8015
+~ Custom affNIST without shearing  :  0.8089
+--------------- 19-th EPOCH ----------------
+~ Train                            :  0.9991
+~ original MNIST                   :  0.9900
+~ affNIST                          :  0.2127
+~ my MNIST                         :  0.9900
+~ Custom affNIST                   :  0.7961
+~ Custom affNIST without shearing  :  0.8062
+--------------- 20-th EPOCH ----------------
+~ Train                            :  0.9996
+~ original MNIST                   :  0.9905
+~ affNIST                          :  0.2269
+~ my MNIST                         :  0.9905
+~ Custom affNIST                   :  0.8090
+~ Custom affNIST without shearing  :  0.8222
+--------------- 21-th EPOCH ----------------
+~ Train                            :  0.9996
+~ original MNIST                   :  0.9905
+~ affNIST                          :  0.2111
+~ my MNIST                         :  0.9905
+~ Custom affNIST                   :  0.8068
+~ Custom affNIST without shearing  :  0.8152
+--------------- 22-th EPOCH ----------------
+~ Train                            :  0.9997
+~ original MNIST                   :  0.9912
+~ affNIST                          :  0.2352
+~ my MNIST                         :  0.9912
+~ Custom affNIST                   :  0.8216
+~ Custom affNIST without shearing  :  0.8316
+--------------- 23-th EPOCH ----------------
+~ Train                            :  0.9997
+~ original MNIST                   :  0.9910
+~ affNIST                          :  0.2017
+~ my MNIST                         :  0.9910
+~ Custom affNIST                   :  0.8129
+~ Custom affNIST without shearing  :  0.8256
+--------------- 24-th EPOCH ----------------
+~ Train                            :  0.9997
+~ original MNIST                   :  0.9902
+~ affNIST                          :  0.2172
+~ my MNIST                         :  0.9902
+~ Custom affNIST                   :  0.8097
+~ Custom affNIST without shearing  :  0.8237
+--------------- 25-th EPOCH ----------------
+~ Train                            :  0.9998
+~ original MNIST                   :  0.9907
+~ affNIST                          :  0.2123
+~ my MNIST                         :  0.9907
+~ Custom affNIST                   :  0.8098
+~ Custom affNIST without shearing  :  0.8229
+--------------- 26-th EPOCH ----------------
+~ Train                            :  0.9998
+~ original MNIST                   :  0.9913
+~ affNIST                          :  0.2300
+~ my MNIST                         :  0.9913
+~ Custom affNIST                   :  0.8195
+~ Custom affNIST without shearing  :  0.8300
+--------------- 27-th EPOCH ------------------------------------
+~ Train                            :  0.9998
+~ original MNIST                   :  0.9915
+~ affNIST                          :  0.2143
+~ my MNIST                         :  0.9915
+~ Custom affNIST                   :  0.8157
+~ Custom affNIST without shearing  :  0.8276
+--------------- 28-th EPOCH ----------------
+~ Train                            :  0.9998
+~ original MNIST                   :  0.9913
+~ affNIST                          :  0.2284
+~ my MNIST                         :  0.9913
+~ Custom affNIST                   :  0.8123
+~ Custom affNIST without shearing  :  0.8294
+--------------- 29-th EPOCH ----------------
+~ Train                            :  0.9999
+~ original MNIST                   :  0.9911
+~ affNIST                          :  0.2282
+~ my MNIST                         :  0.9911
+~ Custom affNIST                   :  0.8024
+~ Custom affNIST without shearing  :  0.8192
+--------------- 30-th EPOCH ----------------
+~ Train                            :  0.9999
+~ original MNIST                   :  0.9901
+~ affNIST                          :  0.2341
+~ my MNIST                         :  0.9901
+~ Custom affNIST                   :  0.8145
+~ Custom affNIST without shearing  :  0.8250
+--------------- 31-th EPOCH ----------------
+~ Train                            :  0.9999
+~ original MNIST                   :  0.9903
+~ affNIST                          :  0.2403
+~ my MNIST                         :  0.9903
+~ Custom affNIST                   :  0.8168
+~ Custom affNIST without shearing  :  0.8269
+--------------- 32-th EPOCH ----------------
+~ Train                            :  0.9999
+~ original MNIST                   :  0.9904
+~ affNIST                          :  0.2323
+~ my MNIST                         :  0.9904
+~ Custom affNIST                   :  0.8182
+~ Custom affNIST without shearing  :  0.8303
+--------------- 33-th EPOCH ----------------
+~ Train                            :  0.9999
+~ original MNIST                   :  0.9907
+~ affNIST                          :  0.2381
+~ my MNIST                         :  0.9907
+~ Custom affNIST                   :  0.8174
+~ Custom affNIST without shearing  :  0.8283
+--------------- 34-th EPOCH ----------------
+~ Train                            :  0.9999
+~ original MNIST                   :  0.9902
+~ affNIST                          :  0.2215
+~ my MNIST                         :  0.9902
+~ Custom affNIST                   :  0.8098
+~ Custom affNIST without shearing  :  0.8249
+--------------- 35-th EPOCH ----------------
+~ Train                            :  0.9999
+~ original MNIST                   :  0.9913
+~ affNIST                          :  0.2348
+~ my MNIST                         :  0.9913
+~ Custom affNIST                   :  0.8153
+~ Custom affNIST without shearing  :  0.8253
+--------------- 36-th EPOCH ----------------
+~ Train                            :  0.9999
+~ original MNIST                   :  0.9901
+~ affNIST                          :  0.2267
+~ my MNIST                         :  0.9901
+~ Custom affNIST                   :  0.8144
+~ Custom affNIST without shearing  :  0.8255
+--------------- 37-th EPOCH ----------------
+~ Train                            :  1.0000
+~ original MNIST                   :  0.9910
+~ affNIST                          :  0.2288
+~ my MNIST                         :  0.9910
+~ Custom affNIST                   :  0.8176
+~ Custom affNIST without shearing  :  0.8309

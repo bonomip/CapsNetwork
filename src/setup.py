@@ -5,15 +5,22 @@ from tqdm import tqdm
 ## project class import
 
 from capsuleNetwork_v2 import CapsuleNetwork as CapsNet
-from capsuleNetwork_v3 import CapsuleNetwork as CapsNet2
 import affNIST
 import caffNIST
 import MNIST
 import cWSaffNIST
+import rMNIST
 
 class Setup:
 
-    GEN = ["original_MNIST", "affNIST", "my_MNIST", "Custom_affNIST", "Custom_affNIST_without_shearing"] #dataset keys
+    GEN = [
+        "original_MNIST",
+        "affNIST",
+        "my_MNIST", # deprecated
+        "Custom_affNIST", # deprecated
+        "Custom_affNIST_without_shearing", # deprecated
+        "rMNIST"
+    ] #dataset keys
     BATCH_SIZE = 64
     DEBUG_NO_MINI_BATCH = 10
 
@@ -35,17 +42,14 @@ class Setup:
 
 ############################## MODEL
 
-    def init_model(self, id, version, x, y, learning_rate, main_model_version):
+    def init_model(self, id, version, x, y, learning_rate):
         self.params["id"] = id
         self.params["version"] = version
 
         if(learning_rate > 0):
             self.params["learning_rate"] = learning_rate;
       
-        if(main_model_version == "v3"):
-            model = CapsNet2(**self.params)
-        else:
-            model = CapsNet(**self.params)
+        model = CapsNet(**self.params)
 
         _ = model.train(x[:1],y[:1])
         return model
@@ -97,6 +101,15 @@ class Setup:
             else:
                 
                 (X_, y_) = cWSaffNIST.load(version, train)
+
+        elif string == self.GEN[5]: # RANDOM translation mnist
+            if(create):
+                
+                (X_, y_) = rMNIST.create_random_mnist()
+                
+            else:
+                
+                (X_, y_) = rMNIST.load(train)
 
         ### add others datasets
 

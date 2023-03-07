@@ -5,6 +5,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
+@DeprecationWarning
 def pretty_experiment_overview(setup):
     
     no_train_imgs = setup.X_train.shape[0]

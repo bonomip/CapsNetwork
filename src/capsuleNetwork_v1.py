@@ -39,16 +39,9 @@ class CapsuleNetwork(tf.keras.Model):
         #dense layers size
         self.d1 = 512
         self.d2 = 1024
-        self.d3 = size*size
+        self.d3 = 784
+        self.no_primary_capsule = 1152
 
-        self.no_primary_capsule = 0
-
-        if size == 28:
-            self.no_primary_capsule = 1152
-        if size == 40:
-            self.no_primary_capsule = 4608 
-
-        
         with tf.name_scope("Variables") as scope:
 
             self.convolution = tf.keras.layers.Conv2D(self.no_of_conv_kernels, [9,9], strides=[1,1], 
@@ -135,9 +128,6 @@ class CapsuleNetwork(tf.keras.Model):
     def loss_function(self, v, reconstructed_image, y, y_image):
         ### margin loss is a reduce_mean .... in the paper this is not specified.
         ### in the paper is only the summ of all the digit loss.
-        ### one way to fix it is:
-        #### 1) self.apha * 1600 (in case of images 40x40)
-        #### 2) magin_loss * 10
         prediction = self.safe_norm(v)
         prediction = tf.reshape(prediction, [-1, self.no_of_secondary_capsules])
         left_margin = tf.square(tf.maximum(0.0, self.m_plus - prediction))
